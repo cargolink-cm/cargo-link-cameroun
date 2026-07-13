@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: Process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
+    baseURL: 'https://cargo-link-cameroun-production.up.railway.app/api'
 });
 
 API.interceptors.request.use((config) => {

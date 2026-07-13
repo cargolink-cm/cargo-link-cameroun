@@ -8,6 +8,7 @@ function Messages({ user, demandeId }) {
 
     useEffect(() => {
         chargerMessages();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [demandeId]);
 
     const chargerMessages = async () => {

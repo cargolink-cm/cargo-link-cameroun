@@ -8,7 +8,7 @@ function Notation({ evalueId, demandeId, onNotationEnvoyee }) {
 
     const envoyerNotation = async () => {
         const token = localStorage.getItem('cargolink_token');
-        await axios.post('http://localhost:5000/api/notations', {
+        await axios.post('https://cargo-link-cameroun-production.up.railway.app/api/notations', {
             evalue_id: evalueId,
             demande_id: demandeId,
             note: parseInt(note),

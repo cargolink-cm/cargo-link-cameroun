@@ -10,7 +10,11 @@ function Transporteur({ user }) {
     }, []);
 
     const handleAccepter = async (id) => {
-        await accepterDemande(id, { montant_final: montant });
+        if (!montant) {
+            alert('Veuillez saisir un montant');
+            return;
+        }
+        await accepterDemande(id, { montant_final: parseInt(montant) });
         getDemandesDisponibles().then(res => setDemandes(res.data));
         setMontant('');
     }

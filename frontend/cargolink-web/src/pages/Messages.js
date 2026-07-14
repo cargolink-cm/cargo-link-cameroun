@@ -14,7 +14,7 @@ function Messages({ user, demandeId }) {
     const chargerMessages = async () => {
         try {
         const token = localStorage.getItem('cargolink_token');
-        const res = await axios.get('https://cargo-link-production.up.railway.app/api/messages/' + demandeId, {
+        const res = await axios.get('https://cargo-link-cameroun-production.up.railway.app/api/messages/' + demandeId, {
             headers: { Authorization: 'Bearer ' + token}
         });
         setMessages(res.data);

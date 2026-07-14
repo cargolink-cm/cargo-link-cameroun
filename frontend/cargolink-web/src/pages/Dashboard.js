@@ -45,7 +45,7 @@ budget_final: budget,
         <h3>Demandes disponibles</h3>
         <ul>
         <Messages user={user} demandeId={1} />
-        <Notations evalueId={2} demandeId={1} />
+        <Notations evalueId={1} demandeId={1} />
         {demandes.map(d => (
             <li key={d.id}>{d.marchandise} - {d.ville_depart} vers {d.ville_arrivee}</li>
         ))}

@@ -3,20 +3,20 @@ import { getDemandesDisponibles, accepterDemande } from '../services/api';
 
 function Transporteur({ user }) {
     const [demandes, setDemandes] = useState([]);
-    const [montant, setMontant] = useState('');
+    const [montants, setMontants] = useState('');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
     }, []);
 
     const handleAccepter = async (id) => {
-        if (!montant) {
+        if (!montants[id]) {
             alert('Veuillez saisir un montant');
             return;
         }
-        await accepterDemande(id, { montant_final: parseInt(montant) });
+        await accepterDemande(id, { montant_final: parseInt(montants[id]) });
         getDemandesDisponibles().then(res => setDemandes(res.data));
-        setMontant('');
+        setMontants({...montants, [id]: ''});
     }
 
     return (
@@ -34,7 +34,7 @@ function Transporteur({ user }) {
                             <p><strong>Arrivee:</strong> {d.ville_arrivee}</p>
                             <p><strong>Date:</strong> {d.date_souhaitee}</p>
                             <p><strong>Budget:</strong> {d.budget_final} FCFA</p>
-                            <input placeholder="Votre montant en FCFA" value={montant} onChange={e => setMontant(e.target.value)} />
+                            <input placeholder="Votre montant en FCFA" value={montants[d.id] || ''} onChange={e => setMontants({...montants, [d.id]: e.target.value})} />
                             <button onClick={() => handleAccepter(d.id)}>Accepter cette demande</button>
                             </li>
                     ))}

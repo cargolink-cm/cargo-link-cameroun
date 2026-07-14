@@ -18,7 +18,7 @@ if (page ==='transporteur-inscription') {
   return <Inscription onInscription={(u) => {setUser(u); setPage('transporteur'); }} />
 }
 if (page === 'dashboard') {
-  if (user? type_utilisateur === 'transporteur') {
+  if (user?.type_utilisateur === 'transporteur') {
     return <Transporteur user={user} />;
   }
   return <Dashboard user={user} />;

@@ -32,7 +32,7 @@ budget_final: budget,
         <div className="dashboard">
        <div className="dashboard-header">
         <h2>Bonjour {user?.nom_complet}</h2>
-        <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='http://localhost:3000'; }}>Se deconnecter</button>
+        <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
         </div>
         <h3>Nouvelle demande de transport</h3>
         <input placeholder="Marchandise" value={marchandise} onChange={e => setMarchandise(e.target.value)} />

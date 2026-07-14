@@ -40,7 +40,7 @@ function Inscription({ onInscription }) {
                     <option value="transporteur">Transporteur</option>
                     </select>
                     <button onClick={handleSubmit}>S inscrire</button>
-                    <button onClick={() => window.location.href='http://localhost:3000'}>Deja inscrit ? Retour accueil</button>
+                    <button onClick={() => window.location.href='https://cargo-link-cameroun.vercel.app'}>Deja inscrit ? Retour accueil</button>
                     </div>
         );
     }

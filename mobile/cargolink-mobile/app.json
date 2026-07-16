@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Cargolink-Cameroun",
+    "slug": "cargolink-cameroun",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "cargolink",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.exdivia.cargolink"
+    },
+    "android": {
+      "adaptativeIcon": {
+        "foregroundImage": "./assets/images/adaptative-icon.png",
+        "backgroundColor": "#1F4E79"
+      },
+      "package": "com.exdivia.cargolink"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "33da0e39-c18a-4dd4-9f58-482a266f187a"
+      }
+    }
+  }
+}

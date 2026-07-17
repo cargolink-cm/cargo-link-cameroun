@@ -21,7 +21,7 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#1F4E79', alignItems: 'center', justifyContent: 'center', padding: 30 },
     titre: { fontSize: 32, fontWeight: 'bold', color: 'white', textAlign: 'center', marginBotttom: 50 },
-    sousTitre= { fontSize: 16, color: '#D6E4F0', textAlign: 'center', marginBottom: 50 },
+    sousTitre: { fontSize: 16, color: '#D6E4F0', textAlign: 'center', marginBottom: 50 },
     btnChargeur: { backgroundColor: '#C55A11', padding: 15, borderRadius: 10, width: '100%', alignItems: 'center', marginBottom: 15 },
     btnTranporteur: { backgroundColor: 'white', padding: 15, borderRadius: 10, weidth: '100%', alignitems: 'center', marginBottom: 15, borderWidth: 2, borderColor: 'white' },
     btnConnexion: { backgroundColor: 'transparent', padding: 15, borderRadius: 10, width: '100%', alignItems: 'center', borderWidth: 1, borderColor: '#D6E4F0' },

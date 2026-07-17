@@ -23,7 +23,7 @@ export default function Inscription() {
         });
                 router.push('/dashboard');
             } catch (err) {
-                Alert.alert('Erreur', 'Inscription impossible');
+                Alert.alert('Erreur', err.message || 'Inscription impossible');
             }
         };
 

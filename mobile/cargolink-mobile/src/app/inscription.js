@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
@@ -28,7 +28,7 @@ export default function Inscription() {
         };
 
         return (
-            <View style={Styles.container}>
+            <View style={styles.container}>
             <Text style={styles.titre}>Inscription Cargolink</Text>
             <TextInput style={styles.input} placeholder="Nom complet" value={nomComplet} onChangeText={setNomComplet} />
             <TextInput style={styles.input} placeholder="Email (optionnel" value={email} onChangeText={setEmail} keyboardType="email-address" />

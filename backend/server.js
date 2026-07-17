@@ -8,7 +8,7 @@ const messagesRoutes = require('./routes/messages');
 const notationsRoutes = require('./routes/notations');
 
 const app = express();
-app.use(cors({ origin: ['http://localhost:3000', 'https://cargo-link-cameroun.vercel.app'] }));
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);

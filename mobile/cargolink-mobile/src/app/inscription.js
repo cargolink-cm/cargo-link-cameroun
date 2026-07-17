@@ -15,7 +15,7 @@ export default function Inscription() {
     const handleInscription = async () => {
         try {
             const res = await axios.post(API_URL + '/auth/inscription', {
-                nom_complet,
+                nom_complet: nomComplet,
                 email,
                 telephone,
                 password,

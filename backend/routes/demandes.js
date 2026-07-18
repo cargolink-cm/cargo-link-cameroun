@@ -7,6 +7,13 @@ router.post('/', auth, async (req, res) => {
     console.log('User ID:', req.user);
     console.log('Body:', req.body);
     const {marchandise, ville_depart, ville_arrivee, date_souhaitee, poids_tonnes, budget_final } = req.body;
+    const regexTel = /(\+?237|0)?\s*[0-9]{8,9}/g;
+    const champsAVerifier = [marchandise, ville_depart, ville_arrivee];
+    for (const champ of champsAVerifier) {
+        if (champ && regexTel.test(champ)) {
+            return res.status(400).json({ error: 'Les coordonnees personnelles sont interdites dans les champs de demande' });
+        }
+    }
     try {
         const result = await pool.query(
             'INSERT INTO demandes_transport (chargeur_id,marchandise,ville_depart,ville_arrivee,date_souhaitee,poids_tonnes,budget_final) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',

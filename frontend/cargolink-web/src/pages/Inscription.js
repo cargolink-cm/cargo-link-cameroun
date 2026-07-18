@@ -39,6 +39,7 @@ function Inscription({ onInscription }) {
                     <option value="chargeur">Chargeur</option>
                     <option value="transporteur">Transporteur</option>
                     </select>
+                    <p style={{color: '#C55A11',fontSize:'12px',textAlign:'center',marginBottom:'10px'}}>En vous inscrivant vous acceptez que tout echange de contact direct hors plateforme entraine la suspension definitive de votre compte</p>
                     <button onClick={handleSubmit}>S inscrire</button>
                     <button onClick={() => window.location.href='https://cargo-link-cameroun.vercel.app'}>Deja inscrit ? Retour accueil</button>
                     </div>

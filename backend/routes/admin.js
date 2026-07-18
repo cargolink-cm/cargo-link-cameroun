@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 router.get('/transactions', auth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT t.*, d.marchandise, d.ville_depart, d.ville_arrivee FROM transactions t JOIN demandes_transport d ON t.demande_id =· d.id ORDER BY t.created_at DESC'
+      'SELECT t.*, d.marchandise, d.ville_depart, d.ville_arrivee FROM transactions t JOIN demandes_transport d ON t.demande_id = d.id ORDER BY t.created_at DESC'
     );
     res.json(result.rows);
   } catch (error) {

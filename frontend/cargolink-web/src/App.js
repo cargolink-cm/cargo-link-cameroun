@@ -43,7 +43,7 @@ if (page === 'transporteur') {
               <button className="btn-chargeur" onClick={() => setPage('inscription')}>Je suis chargeur</button>
               <button className="btn-transporteur" onClick={() => setPage('transporteur-inscription')}>Je suis transporteur</button>
               <button onClick={() => setPage('connexion')}>Deja inscrit ? Se connecter</button>
-              <button onClick={() => setPage('admin')}>Admin</button>
+              <button onClick={() => setPage('admin')}>Admin EXDIVIA</button>
               </div>
               </div>
               </main>

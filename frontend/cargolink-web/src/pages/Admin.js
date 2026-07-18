@@ -24,6 +24,7 @@ export default function Admin() {
   const chargerDonnees = async () => {
     try {
       const token = localStorage.getItem('cargolink_token');
+      if (!token) { alert('Veuillez vous cinnecter d abord'); return; }
       const [resTrans, resDemandes] = await Promise.all([
         axios.get(API + '/admin/transactions', { headers: { Authorization: 'Bearer ' + token } }),
         axios.get(API + '/admin/demandes', { headers: { Authorization: 'Bearer ' + token } })

@@ -35,6 +35,9 @@ function Transporteur({ user }) {
                             <p><strong>Date:</strong> {d.date_souhaitee}</p>
                             <p><strong>Budget:</strong> {d.budget_final} FCFA</p>
                             <input placeholder="Votre montant en FCFA" value={montants[d.id] || ''} onChange={e => setMontants({...montants, [d.id]: e.target.value})} />
+                            {montants[d.id] && parseInt(montants[d.id]) > d.budget_final && (
+                                <p style={{color:'red',fontSize:'12px',marginTop:'5px'}}>ATTENTION : Votre budget depasse le budget du chargeur ({d.budget_final} FCFA</p>
+                            )}
                             <button onClick={() => handleAccepter(d.id)}>Accepter cette demande</button>
                             <p style={{color: '#C55A11',fontWeight:'bold',textAlign:'center',marginTop:'10px'}}>Apres acceptation payer la commission sur le numero EXDIVIA SARL : [694400065]</p>
                             </li>

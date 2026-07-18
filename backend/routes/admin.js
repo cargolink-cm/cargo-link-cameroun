@@ -29,7 +29,7 @@ router.get('/demandes', auth, async (req, res) => {
 router.put('/debloquer/:id', auth, async (req, res) => {
   try {
     await pool.query(
-      'UPDATE·demandes_transport SET statut = $1 WHERE id = $2',
+      'UPDATE demandes_transport SET statut = $1 WHERE id = $2',
       ['contact_debloque', req.params.id]
     );
     res.json({ message: 'Contact débloqué avec succès' });

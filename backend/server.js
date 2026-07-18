@@ -5,6 +5,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const demandesRoutes = require('./routes/demandes');
 const messagesRoutes = require('./routes/messages');
+const adminRoutes = require('./routes/admin');
 const notationsRoutes = require('./routes/notations');
 
 const app = express();
@@ -15,6 +16,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/demandes', demandesRoutes);
 app.get('/test-messages', (req, res) => res.json({ ok: true }));
 app.use('/api/messages', messagesRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/notations', notationsRoutes);
 app.get('/', (req, res) => {
   res.json({ message: 'Cargolink API -EXDIVIA SARL' });

@@ -4,6 +4,7 @@ import Connexion from './pages/Connexion';
 import Dashboard from './pages/Dashboard';
 import Inscription from './pages/Inscription';
 import Transporteur from './pages/Transporteur';
+import Admin from './pages/Admin';
 function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState('accueil');
@@ -23,6 +24,9 @@ if (page === 'dashboard') {
   }
   return <Dashboard user={user} />;
 }
+if (page === 'admin') {
+  return <Admin />;
+}
 if (page === 'transporteur') {
   return <Transporteur user={user} />;
 }
@@ -39,6 +43,7 @@ if (page === 'transporteur') {
               <button className="btn-chargeur" onClick={() => setPage('inscription')}>Je suis chargeur</button>
               <button className="btn-transporteur" onClick={() => setPage('transporteur-inscription')}>Je suis transporteur</button>
               <button onClick={() => setPage('connexion')}>Deja inscrit ? Se connecter</button>
+              <button onClick={() => setPage('admin')}>Admin</button>
               </div>
               </div>
               </main>

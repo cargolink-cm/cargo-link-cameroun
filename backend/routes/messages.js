@@ -7,6 +7,10 @@ console.log('Route messages chargée');
 router.post('/', auth, async (req, res) => {
     console.log('MESSAGE RECU:', req.body);
     const { demande_id, contenu } = req.body;
+    const regexTel = /(\+?237|0)?\s*[0-9]{8,9}/g;
+    if (contenu && regexTel.test(contenu)) {
+        return res.status(400).json({ error: 'Les numeros de telephone sont interdits dans la messagerie' });
+    }
 try {
     const result = await pool.query(
         'INSERT INTO messages (expediteur_id, demande_id, contenu) VALUES ($1,$2,$3) RETURNING *',

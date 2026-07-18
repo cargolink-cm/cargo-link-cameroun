@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import VILLES from '../data/villes';
 import { getDemandesDisponibles, accepterDemande } from '../services/api';
 
 function Transporteur({ user }) {

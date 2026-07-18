@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getDemandesDisponibles, creerDemande } from '../services/api';
+import VILLES from '../data/villes';
 import Messages from './Messages';
 import Notations from './Notations';
 
@@ -37,8 +38,14 @@ budget_final: budget,
         </div>
         <h3>Nouvelle demande de transport</h3>
         <input placeholder="Marchandise" value={marchandise} onChange={e => setMarchandise(e.target.value)} />
-        <input placeholder="Ville depart" value={villeDepart} onChange={e => setVilleDepart(e.target.value)} />
-        <input placeholder="Ville arrivee" value={villeArrivee} onChange={e => setVilleArrivee(e.target.value)} />
+        <select value={villeDepart} onChange={e => setVilleDepart(e.target.value)}>
+            <option value="">Choisir ville depart</option>
+            {VILLES.map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+        <select value={villeArrivee} onChange={e => setVilleArrivee(e.target.value)}>
+            <option value="">Choisir ville arrivee</option>
+            {VILLES.map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
         <input type="date" value={dateSouhaitee} onChange={e => setDateSouhaitee(e.target.value)} />
         <input placeholder="Poids en tonnes" value={poids} onChange={e => setPoids(e.target.value)} />
         <input placeholder="Budget en FCFA" value={budget} onChange={e => setBudget(e.target.value)} />

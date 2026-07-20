@@ -27,6 +27,7 @@ router.post('/inscription', async (req, res) => {
         );
         res.json({ token, user: result.rows[0] });
     } catch (error) {
+        console.log('ERREUR INSCRIPTION:', error.message);
         res.status(500).json({ error: error.message });
     }
 });

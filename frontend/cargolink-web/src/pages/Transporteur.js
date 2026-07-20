@@ -39,6 +39,14 @@ function Transporteur({ user }) {
                             <p><strong>Date:</strong> {d.date_souhaitee}</p>
                             <p><strong>Budget:</strong> {d.budget_final} FCFA</p>
                             <input placeholder="Votre montant en FCFA" value={montants[d.id] || ''} onChange={e => setMontants({...montants, [d.id]: e.target.value})} />
+                            {montants[d.id] && (
+                                <div style={{backgroundColor:'#D6E4F0', padding:'10px',borderRadius:'8px',marginTop:'5px'}}>
+                                    <p><strong>Recapitulatif :</strong></p>
+                                    <p>Montant total : <strong>{parseInt(montants[d.id]).toLocaleString()} FCFA</strong></p>
+                                    <p>Commission EXDIVIA SARL (7%) : <strong style={{color:'#C55A11'}}>{Math.round(parseInt(montants[d.id]) * 0.07).toLocaleString()} FCFA</strong></p>
+                                    <p>Vous percevrez : <strong style={{color:'#1A5E38'}}>{Math.round(parseInt(montants[d.id]) * 0.93).toLocaleString()} FCFA</strong></p>
+                                    </div>
+                            )}
                             {montants[d.id] && parseInt(montants[d.id]) > d.budget_final && (
                                 <p style={{color:'red',fontSize:'12px',marginTop:'5px'}}>ATTENTION : Votre budget depasse le budget du chargeur ({d.budget_final} FCFA</p>
                             )}

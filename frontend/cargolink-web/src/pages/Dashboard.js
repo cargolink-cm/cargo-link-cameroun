@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getDemandesDisponibles, creerDemande } from '../services/api';
 import VILLES from '../data/villes';
 import Messages from './Messages';
 import Notations from './Notations';

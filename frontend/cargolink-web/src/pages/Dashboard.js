@@ -15,6 +15,10 @@ function Dashboard({ user }) {
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
+        const interval = setInterval(() => {
+            getDemandesDisponibles().then(res => setDemandes(res.data));
+        }, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     const handleCreerDemande = async () => {

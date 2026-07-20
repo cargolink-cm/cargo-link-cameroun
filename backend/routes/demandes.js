@@ -56,5 +56,15 @@ router.put('/:id/accepter', auth, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-        
+router.get('/mes-demandes', auth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT d.*, u.nom_complet as transporteur_nom, u.telephone as transporteur_tel, u.note_moyenne as transporteur_note FROM demandes_transport d LEFT JOIN users u ON d.transporteur_id = u.id WHERE d.chargeur_id = $1 ORDER BY d.created_at DESC',
+            [req.user.id]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});        
 module.exports = router; 

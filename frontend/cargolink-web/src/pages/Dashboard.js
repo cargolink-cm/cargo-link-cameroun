@@ -3,9 +3,11 @@ import { getDemandesDisponibles, creerDemande } from '../services/api';
 import VILLES from '../data/villes';
 import Messages from './Messages';
 import Notations from './Notations';
+import { getDemandesDisponibles, creerDemande, getMesDemandes } from '../services/api';
 
 function Dashboard({ user }) {
     const [demandes, setDemandes] = useState([]);
+    const [mesDemandes, setMesDemandes] = useState([]);
     const [marchandise, setMarchandise] = useState('');
     const [villeDepart, setVilleDepart] = useState('');
     const [villeArrivee, setVilleArrivee] = useState('');
@@ -15,8 +17,10 @@ function Dashboard({ user }) {
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
+        getMesDemandes().then(res => setMesDemandes(res.data));
         const interval = setInterval(() => {
             getDemandesDisponibles().then(res => setDemandes(res.data));
+            getMesDemandes().then(res => setMesDemandes(res.data));
         }, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -54,6 +58,16 @@ budget_final: budget,
         <input placeholder="Poids en tonnes" value={poids} onChange={e => setPoids(e.target.value)} />
         <input placeholder="Budget en FCFA" value={budget} onChange={e => setBudget(e.target.value)} />
         <button onClick={handleCreerDemande}>Publier la demande</button>
+        <h3>Mes demandes</h3>
+        {mesDemandes.map(d => (
+            <div key={d.id} className="demande-card">
+                <p><strong>{d.marchandise}</strong> - {d.ville_depart} vers {d.ville_arrivee}</p>
+                <p>Statut : <strong style={{color: d.statut === 'acceptee' ? 'green' : 'orange'}}>{d.statut}</strong></p>
+                {d.transporteur_nom && <p>Transporteur : {d.transporteur_nom} - Note : {d.transporteur_note}/5</p>}
+                {d.transporteur_tel && <p style={{color:'#C55A11',fontWeight:'bold'}}
+                >Tel transporteur : {d.transporteur_tel}</p>}
+                </div>
+        ))}
         <h3>Demandes disponibles</h3>
         <ul>
         <Messages user={user} demandeId={1} />

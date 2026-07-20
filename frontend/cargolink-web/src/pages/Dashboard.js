@@ -68,7 +68,7 @@ budget_final: budget,
                     <div style={{backgroundColor:'#FCE4D6',padding:'10px',borderRadius:'8px',marginTop:'10px'}}>
                         <p style={{color:'#C55A11',fontWeight:'bold'}}>** En attente de paiement de commission</p>
                         <p>Payez <strong>{Math.round(d.montant_final * 0.07)?.toLocaleString()} FCFA</strong> sur le numero EXDIVIA SARL : <strong>[694400065]</strong></p>
-                        <p style={{fontSize:'12px',color:'#555',marginTop:'5px'}}>Detail : Montant transport {d.montant_final?.toLocaleString()} FCFA - Commission 7% : {Math.round(d.montant_final * 0,07)?.toLocaleString()} FCFA - Transporteur percevra : {Math.round(d.montant_final * 0,93)?.toLocaleString()} FCFA</p>
+                        <p style={{fontSize:'12px',color:'#555',marginTop:'5px'}}>Detail : Montant transport {d.montant_final?.toLocaleString()} FCFA - Commission 7% : {Math.round(d.montant_final * 0.07)?.toLocaleString()} FCFA - Transporteur percevra : {Math.round(d.montant_final * 0.93)?.toLocaleString()} FCFA</p>
                         <p style={{fontSize:'12px',color:'#888'}}>Vous recevrez le contact du transporteur dès validation du paiement</p>
                         </div>
                     )}

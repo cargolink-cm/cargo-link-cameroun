@@ -37,6 +37,7 @@ budget_final: budget,
         getDemandesDisponibles().then(res => setDemandes(res.data));
     };
 
+    console.log('mesDemandes:', mesDemandes);
     return (
         <div className="dashboard">
        <div className="dashboard-header">

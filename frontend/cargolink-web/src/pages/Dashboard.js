@@ -64,8 +64,13 @@ budget_final: budget,
                 <p><strong>{d.marchandise}</strong> - {d.ville_depart} vers {d.ville_arrivee}</p>
                 <p>Statut : <strong style={{color: d.statut === 'acceptee' ? 'green' : 'orange'}}>{d.statut}</strong></p>
                 {d.transporteur_nom && <p>Transporteur : {d.transporteur_nom} - Note : {d.transporteur_note}/5</p>}
-                {d.transporteur_tel && <p style={{color:'#C55A11',fontWeight:'bold'}}
-                >Tel transporteur : {d.transporteur_tel}</p>}
+                {d.statut === 'acceptee' && d.transporteur_nom && (
+                    <div style={{backgroundColor:'#FCE4D6',padding:'10px',borderRadius:'8px',marginTop:'10px'}}>
+                        <p style={{color:'#C55A11',fontWeight:'bold'}}>** En attente de paiement de commission</p>
+                        <p>Payez <strong>{Math.round(d.montant_final * 0.07)?.toLocaleString()} FCFA</strong> sur le numero EXDIVIA SARL : <strong>[694400065]</strong></p>
+                        <p style={{fontSize:'12px',color:'#888'}}>Vous recevrez le contact du transporteur dès validation du paiement</p>
+                        </div>
+                    )}
                 </div>
         ))}
         <h3>Demandes disponibles</h3>

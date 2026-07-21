@@ -3,6 +3,7 @@ import VILLES from '../data/villes';
 import Messages from './Messages';
 import Notations from './Notations';
 import { getDemandesDisponibles, creerDemande, getMesDemandes } from '../services/api';
+import TYPES_CAMIONS from '../data/camions';
 
 function Dashboard({ user }) {
     const [demandes, setDemandes] = useState([]);
@@ -13,6 +14,7 @@ function Dashboard({ user }) {
     const [dateSouhaitee, setDateSouhaitee] = useState('');
     const [poids, setPoids] = useState('');
     const [budget, setBudget] = useState('');
+    const [typeCamion, setTypeCamion] = useState('Tout type de camion');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
@@ -32,6 +34,7 @@ ville_arrivee: villeArrivee,
 date_souhaitee: dateSouhaitee,
 poids_tonnes: poids,
 budget_final: budget,
+type_camion_souhaite: typeCamion,
         });
         getDemandesDisponibles().then(res => setDemandes(res.data));
     };
@@ -57,6 +60,10 @@ budget_final: budget,
         <input type="date" value={dateSouhaitee} onChange={e => setDateSouhaitee(e.target.value)} />
         <input placeholder="Poids en tonnes" value={poids} onChange={e => setPoids(e.target.value)} />
         <input placeholder="Budget en FCFA" value={budget} onChange={e => setBudget(e.target.value)} />
+        <select value={typeCamion} onChange={e => setTypeCamion(e.target.value)}>
+        <option value="">Type de camion souhaité</option>
+        {TYPES_CAMIONS.map(t => <option key={t}></option>)}
+        </select>
         <button onClick={handleCreerDemande}>Publier la demande</button>
         <h3>Mes demandes</h3>
         {mesDemandes.map(d => (

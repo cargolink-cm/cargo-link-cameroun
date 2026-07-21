@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 router.post('/', auth, async (req, res) => {
     console.log('User ID:', req.user);
     console.log('Body:', req.body);
-    const {marchandise, ville_depart, ville_arrivee, date_souhaitee, poids_tonnes, budget_final } = req.body;
+    const {marchandise, ville_depart, ville_arrivee, date_souhaitee, poids_tonnes, budget_final, type_camion_souhaite } = req.body;
     const regexTel = /(\+?237|0)?\s*[0-9]{8,9}/g;
     const champsAVerifier = [marchandise, ville_depart, ville_arrivee];
     for (const champ of champsAVerifier) {
@@ -16,8 +16,8 @@ router.post('/', auth, async (req, res) => {
     }
     try {
         const result = await pool.query(
-            'INSERT INTO demandes_transport (chargeur_id,marchandise,ville_depart,ville_arrivee,date_souhaitee,poids_tonnes,budget_final) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
-            [req.user.id, marchandise, ville_depart, ville_arrivee, date_souhaitee, poids_tonnes, budget_final]
+            'INSERT INTO demandes_transport (chargeur_id,marchandise,ville_depart,ville_arrivee,date_souhaitee,poids_tonnes,budget_final,type_camion_souhaite) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+            [req.user.id, marchandise, ville_depart, ville_arrivee, date_souhaitee, poids_tonnes, budget_final, type_camion_souhaite]
         );
         res.json(result.rows[0]);
     } catch (error) {

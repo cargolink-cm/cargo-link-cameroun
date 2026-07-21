@@ -59,6 +59,7 @@ function Transporteur({ user }) {
                             <p><strong>Arrivee:</strong> {d.ville_arrivee}</p>
                             <p><strong>Date:</strong> {d.date_souhaitee}</p>
                             <p><strong>Budget:</strong> {d.budget_final} FCFA</p>
+                            <p><strong>Type camion :</strong> {d.type_camion_souhaite || 'Tout type'}</p>
                             <input placeholder="Votre montant en FCFA" value={montants[d.id] || ''} onChange={e => setMontants({...montants, [d.id]: e.target.value})} />
                             {montants[d.id] && (
                                 <div style={{backgroundColor:'#D6E4F0', padding:'10px',borderRadius:'8px',marginTop:'5px'}}>

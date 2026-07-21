@@ -128,4 +128,14 @@ bts-transporteur {
   font-weight: bold;
 }
 
+  .dashboard select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background: white;
+  }
+
 .erreur { color: red; margin-bottom: 15px; text-align: center; }

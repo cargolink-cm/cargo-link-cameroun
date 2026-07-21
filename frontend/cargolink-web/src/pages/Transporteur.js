@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getDemandesDisponibles, accepterDemande } from '../services/api';
+import { getDemandesDisponibles, accepterDemande, getMesDemandesTransporteur } from '../services/api';
 
 function Transporteur({ user }) {
     const [demandes, setDemandes] = useState([]);
+    const [mesDemandesAcceptees, setMesDemandesAcceptees] = useState([]);
     const [montants, setMontants] = useState('');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
+        getMesDemandesTransporteur().then(res => setMesDemandesAcceptees(res.data));
         const interval = setInterval(() => {
             getDemandesDisponibles().then(res => setDemandes(res.data));
+            getMesDemandesTransporteur().then(res => setMesDemandesAcceptees(res.data));
         }, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -29,6 +32,23 @@ function Transporteur({ user }) {
                 <h2>Bonjour {user?.nom_complet}</h2>
                 <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
                 </div>
+                <h3>Mes demandes acceptées</h3>
+                {mesDemandesAcceptees.map(d => (
+                    <div key={d.id} className="demande-card">
+                        <p><strong>{d.marchandise}</strong> - {d.ville_depart} vers {d.ville_arrivee}</p>
+                        <p>Montant : <strong>{d.montant_final?.toLocaleString} FCFA</strong></p>
+                        <p>Votre part : <strong style={{color:'#1A5E38'}}>{Math.round(d.montant_final*0.93).toLocaleString()} FCFA</strong></p>
+                        {d.contact_debloque ? (
+                            <div style={{backgroundColor:'#E8F5EE',padding:'10px',borderRadius:'8px',marginTop:'5px'}}>
+                                <p style={{color:'#1A5E38',fontWeight:'bold'}}>Contact chargeur debloqué</p>
+                                <p>Chargeur : <strong>{d.chargeur_nom}</strong></p>
+                                <p>Tel : <strong style={{color:'#C55A11'}}>{d.chargeur_tel}</strong></p>
+                                </div>
+                        ) : (
+                            <p style={{color:'#C55A11',fontSize:'12px'}}>En attente de paiement de commission par le chargeur </p>
+                        )}
+                        </div>
+    ))}
                 <h3>Demandes disponibles</h3>
                 <ul>
                     {demandes.map(d => (

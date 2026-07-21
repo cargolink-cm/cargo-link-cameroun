@@ -18,5 +18,6 @@ export const getDemandesDisponibles = () => API.get('/demandes/disponibles');
 export const creerDemande = (data) => API.post('/demandes', data);
 export const accepterDemande = (id, data) => API.put('/demandes/' + id + '/accepter', data);
 export const getMesDemandes = () => API.get('/demandes/mes-demandes');
+export const getMesDemandesTransporteur = () => API.get('/demandes/mes-demandes-transporteur');
 
 export default API;

@@ -66,5 +66,16 @@ router.get('/mes-demandes', auth, async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});        
+});     
+router.get('/mes-demandes-transporteur', auth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT d.*, uc.nom_complet as chargeur_nom, uc.telephone as chargeur_tel FROM demandes_transport d LEFT JOIN users uc ON d.chargeur_id = uc.id WHERE d.transporteur_id = $1 ORDER BY d.created_at DESC',
+            [req.user.id]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}),   
 module.exports = router; 

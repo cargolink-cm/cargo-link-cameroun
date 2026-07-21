@@ -36,6 +36,7 @@ function Transporteur({ user }) {
                 {mesDemandesAcceptees.map(d => (
                     <div key={d.id} className="demande-card">
                         <p><strong>{d.marchandise}</strong> - {d.ville_depart} vers {d.ville_arrivee}</p>
+                        <p>Type camion : <strong>{d.type_camion_souhaite || 'Tout type'}</strong></p>
                         <p>Montant : <strong>{d.montant_final?.toLocaleString} FCFA</strong></p>
                         <p>Votre part : <strong style={{color:'#1A5E38'}}>{Math.round(d.montant_final*0.93).toLocaleString()} FCFA</strong></p>
                         {d.contact_debloque ? (

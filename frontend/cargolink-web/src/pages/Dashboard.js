@@ -62,7 +62,7 @@ type_camion_souhaite: typeCamion,
         <input placeholder="Budget en FCFA" value={budget} onChange={e => setBudget(e.target.value)} />
         <select value={typeCamion} onChange={e => setTypeCamion(e.target.value)}>
         <option value="">Type de camion souhaité</option>
-        {TYPES_CAMIONS.map(t => <option key={t}></option>)}
+        {TYPES_CAMIONS.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <button onClick={handleCreerDemande}>Publier la demande</button>
         <h3>Mes demandes</h3>

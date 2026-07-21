@@ -37,8 +37,8 @@ function Transporteur({ user }) {
                     <div key={d.id} className="demande-card">
                         <p><strong>{d.marchandise}</strong> - {d.ville_depart} vers {d.ville_arrivee}</p>
                         <p>Type camion : <strong>{d.type_camion_souhaite || 'Tout type'}</strong></p>
-                        <p>Montant : <strong>{d.montant_final?.toLocaleString} FCFA</strong></p>
-                        <p>Votre part : <strong style={{color:'#1A5E38'}}>{Math.round(d.montant_final*0.93).toLocaleString()} FCFA</strong></p>
+                        <p>Montant total : <strong>{d.montant_final ? d.montant_final.toLocaleString() : 'Non defini'} FCFA</strong></p>
+                        <p>Votre part : <strong style={{color:'#1A5E38'}}>{d.montant_final ? Math.round(d.montant_final*0.93).toLocaleString() : 'Non défini'} FCFA</strong></p>
                         {d.contact_debloque ? (
                             <div style={{backgroundColor:'#E8F5EE',padding:'10px',borderRadius:'8px',marginTop:'5px'}}>
                                 <p style={{color:'#1A5E38',fontWeight:'bold'}}>Contact chargeur debloqué</p>

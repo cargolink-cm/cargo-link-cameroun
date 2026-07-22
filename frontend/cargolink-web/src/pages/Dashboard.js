@@ -84,6 +84,7 @@ type_camion_souhaite: typeCamion,
                         <div style={{backgroundColor:'#E8F5EE',padding:'10px',borderRadius:'8px'}}>
                             <p style={{color:'#1A5E38',fontWeight:'bold'}}>Contact debloque !</p>
                             <p>Transporteur : <strong>{d.transporteur_nom}</strong></p>
+                            <Notations evaluaId={d.transporteur_id} demandeId={d.id} />
                             <p>Tel : <strong style={{color:'#C55A11'}}>{d.transporteur_tel}</strong></p>
                             </div>
                     )}
@@ -94,7 +95,7 @@ type_camion_souhaite: typeCamion,
         <h3>Demandes disponibles</h3>
         <ul>
         {/* <Messages user={user} demandeId={1} />  */}
-        <Notations evalueId={1} demandeId={1} />
+        {/* <Notations evalueId={1} demandeId={1} /> */}
         {demandes.map(d => (
             <li key={d.id}>{d.marchandise} - {d.ville_depart} vers {d.ville_arrivee}</li>
         ))}

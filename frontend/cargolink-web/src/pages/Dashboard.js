@@ -84,7 +84,7 @@ type_camion_souhaite: typeCamion,
                         <div style={{backgroundColor:'#E8F5EE',padding:'10px',borderRadius:'8px'}}>
                             <p style={{color:'#1A5E38',fontWeight:'bold'}}>Contact debloque !</p>
                             <p>Transporteur : <strong>{d.transporteur_nom}</strong></p>
-                            <Notations evaluaId={d.transporteur_id} demandeId={d.id} />
+                            <Notations evalueId={d.transporteur_id} demandeId={d.id} />
                             <p>Tel : <strong style={{color:'#C55A11'}}>{d.transporteur_tel}</strong></p>
                             </div>
                     )}

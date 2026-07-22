@@ -17,6 +17,10 @@ function Notation({ evalueId, demandeId, onNotationEnvoyee }) {
             headers: { Authorization: 'Bearer ' + token }
         });
         setEnvoye(true);
+        const userData = JSON.parse(window.localeStorage.getItem('cargolink_user'));
+        userData.note_moyenne = note;
+        window.localeStorage.setItem('cargolink_user', JSON.stringify(userData));
+        window.location.reload();
         if (onNotationEnvoyee) onNotationEnvoyee();
     }
 

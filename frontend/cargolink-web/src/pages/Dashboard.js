@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VILLES from '../data/villes';
-import Messages from './Messages';
+// import Messages from './Messages';
 import Notations from './Notations';
 import { getDemandesDisponibles, creerDemande, getMesDemandes } from '../services/api';
 import TYPES_CAMIONS from '../data/camions';
@@ -93,7 +93,7 @@ type_camion_souhaite: typeCamion,
         ))}
         <h3>Demandes disponibles</h3>
         <ul>
-        <Messages user={user} demandeId={1} />
+        {/* <Messages user={user} demandeId={1} />  */}
         <Notations evalueId={1} demandeId={1} />
         {demandes.map(d => (
             <li key={d.id}>{d.marchandise} - {d.ville_depart} vers {d.ville_arrivee}</li>

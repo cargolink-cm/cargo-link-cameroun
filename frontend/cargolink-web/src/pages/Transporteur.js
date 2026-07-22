@@ -30,6 +30,7 @@ function Transporteur({ user }) {
         <div className="dashboard">
             <div className="dashboard-header">
                 <h2>Bonjour {user?.nom_complet}</h2>
+                <p>Note moyenne : {user?.note_moyenne || 'Pas encore noté'} /5</p>
                 <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
                 </div>
                 <h3>Mes demandes acceptées</h3>

@@ -3,17 +3,20 @@ import { getDemandesDisponibles, accepterDemande, getMesDemandesTransporteur } f
 
 function Transporteur({ user }) {
     const [demandes, setDemandes] = useState([]);
+    const [noteMoyenne, setNoteMoyenne] = useState(user?.note_moyenne || 0);
     const [mesDemandesAcceptees, setMesDemandesAcceptees] = useState([]);
     const [montants, setMontants] = useState('');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
         getMesDemandesTransporteur().then(res => setMesDemandesAcceptees(res.data));
+        setNoteMoyenne(user?.note_moyenne || 0);
         const interval = setInterval(() => {
             getDemandesDisponibles().then(res => setDemandes(res.data));
             getMesDemandesTransporteur().then(res => setMesDemandesAcceptees(res.data));
         }, 30000);
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleAccepter = async (id) => {
@@ -30,7 +33,7 @@ function Transporteur({ user }) {
         <div className="dashboard">
             <div className="dashboard-header">
                 <h2>Bonjour {user?.nom_complet}</h2>
-                <p>Note moyenne : {user?.note_moyenne || 'Pas encore noté'} /5</p>
+                <p>Note moyenne : {noteMoyenne > 0 ? noteMoyenne + '/5' : 'Pas encore noté'}</p>
                 <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
                 </div>
                 <h3>Mes demandes acceptées</h3>

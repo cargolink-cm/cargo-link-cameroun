@@ -114,6 +114,7 @@ export default function Admin() {
       <table className="admin-table">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Nom</th>
             <th>Téléphone</th>
             <th>Type</th>

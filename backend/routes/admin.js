@@ -37,5 +37,14 @@ router.put('/debloquer/:id', auth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
+router.get('/utilisateurs', auth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, nom_complet, telephone, type_utilisateur, note_moyenne, created_at FROM users ORDER BY created_at DESC'
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;

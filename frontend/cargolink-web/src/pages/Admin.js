@@ -9,6 +9,7 @@ export default function Admin() {
   const [transactions, setTransactions] = useState([]);
   const [demandes, setDemandes] = useState([]);
   const [totalCommission, setTotalCommission] = useState(0);
+  const [utilisateurs, setUtilisateurs] = useState([]);
 
   const ADMIN_PASSWORD = 'exdivia2026';
 
@@ -33,6 +34,8 @@ export default function Admin() {
       setDemandes(resDemandes.data);
       const total = resTrans.data.reduce((acc, t) => acc + t.commission_exdivia, 0);
       setTotalCommission(total);
+      const resUsers = await axios.get(API + '/admin/utilisateurs', { headers: {Authorization: 'Bearer ' + token } });
+      setUtilisateurs(resUsers.data);
     } catch (error) {
       console.log('Erreur:', error);
     }
@@ -107,6 +110,30 @@ export default function Admin() {
           ))}
         </tbody>
       </table>
+      <h2>Utilisateurs inscrits ({utilisateurs.length})</h2>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Téléphone</th>
+            <th>Type</th>
+            <th>Note</th>
+            <th>Date inscription</th>
+            </tr>
+            </thead>
+            <tbody>
+              {utilisateurs.map(u => (
+                <tr key={u.id}>
+                  <td>{u.id}</td>
+                  <td>{u.nom_complet}</td>
+                  <td>{u.telephone}</td>
+                  <td style={{color: u.type_utilisateur === 'transporteur' ? '#1F4E79' : '#C55A11', fontWeight: 'bold'}}>{u.type_utilisateur}</td>
+                  <td>{u.note_moyenne || '0'}/5</td>
+                  <td>{new Date(u.created_at).toLocaleString('fr-FR')}</td>
+                  </tr>
+              ))}
+              </tbody>
+              </table>
     </div>
   );
 }

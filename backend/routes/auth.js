@@ -52,7 +52,7 @@ router.post('/connexion', async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
-        res.json({ token, user: { id: user.id, email: user.email, nom_complet: user.nom_complet, type_utilisateur: user.type_utilisateur } });
+        res.json({ token, user: { id: user.id, email: user.email, nom_complet: user.nom_complet, type_utilisateur: user.type_utilisateur, note_moyenne: user.note_moyenne } });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

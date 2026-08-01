@@ -21,7 +21,12 @@ export default function Inscription() {
                 password,
                 type_utilisateur: typeUtilisateur
         });
+        const userData = res.data.user;
+        await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
+        if (userData.type_utilisateur === 'transporteur') {
+            router.push('/transporteur');
                 router.push('/dashboard');
+        }
             } catch (err) {
                 Alert.alert('Erreur', err.message || 'Inscription impossible');
             }

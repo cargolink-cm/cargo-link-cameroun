@@ -62,6 +62,9 @@ export default function Dashboard() {
                     <TouchableOpacity style={styles.btn} onPress={publierDemande}>
                         <Text style={styles.btnTexte}>Publier la demande</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnMesDemandes} onPress={() => router.push('/mes-demandes')}>
+                            <Text style={styles.btnTexte}>Mes demandes</Text>
+                            </TouchableOpacity>
                         <Text style={styles.sousTitre}>Demandes disponibles</Text>
                         <FlatList
                         data={demandes}
@@ -88,5 +91,6 @@ const styles = StyleSheet.create({
     btn: { backgroundColor: '#C55A11', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
     btnTexte: { color: 'white', fontSize: 16, fontEeight: 'bold'},
     card: { backgroundColor: 'white', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWddth: 4, borderLeftColor: '#1F4E79' },
+    btnMesDemandes: { backgroundColor: '#C55A11', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15},
     cardTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginBottom: 5 },
 });

@@ -19,7 +19,13 @@ export default function Connexion() {
             });
             await AsyncStorage.setItem('cargolink_token', res.data.token);
             await AsyncStorage.setItem('cargolink_user', JSON.stringify(res.data.user));
+            const userDara = res.data.user;
+            await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
+            if (userData.type_utilisateur === 'transporteur') {
+                router.push('/transporteur');
+            } else {
             router.push('/dashboard');
+            }
         } catch (err) {
             Alert.alert('Erreur', 'Identifiants incorrects');
         }

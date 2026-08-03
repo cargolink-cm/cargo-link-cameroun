@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
     lien: { color: '#1F4E79', textAlign: 'center', marginTop: 10 },
     typeContainer: {flexDirection: 'row', gap: 10, marginBottom: 15 },
-    typeBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 2, borderColor: '#ddd', alignItems: 'center', },
+    typeBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 2, borderColor: '#1F4E79', alignItems: 'center', backgroundColor: '#D6E4F0' },
     typeBtnActif: { backgroundColor: '#1F4E79', borderColor: '#1F4E79' },
-    typeTxt: { color: '#1F4E79', fontWeight: 'bold' },
+    typeTxt: { color: 'white', fontWeight: 'bold' },
 });

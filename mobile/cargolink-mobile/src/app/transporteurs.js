@@ -53,6 +53,9 @@ export default function Transporteur() {
           <Text style={styles.deconnexion}>Deconnecter</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.btnMesDemandes} onPress={() => router.push('/mes-demandes-transporteur')}>
+        <Text style={styles.btnTexte}>Mes demandes acceptées</Text>
+        </TouchableOpacity>
       <Text style={styles.sousTitre}>Demandes disponibles</Text>
       <FlatList
         data={demandes}
@@ -112,4 +115,5 @@ const styles = StyleSheet.create({
   btnTexte: { color: 'white', fontSize: 15, fontWeight: 'bold' },
   contact: { color: '#1A5E38', fontWeight: 'bold', marginTop: 5 },
   attente: { color: '#C55A11', fontSize: 13, marginTop: 5 },
+  btnMesDemandes: { backgroundColor: 'C55A11', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15},
 });

@@ -41,6 +41,14 @@ export default function Inscription() {
             <TextInput style={styles.input} placeholder="Telephone" value={telephone} onChangeText={setTelephone} keyboardType="phone-pad" />
             <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />
             <TouchableOpacity style={styles.btn} onPress={handleInscription}>
+            <View style={styles.typeContainer}>
+                <TouchableOpacity style={[styles.typeBtn, typeUtilisateur === 'chargeur' && styles.typeBtnActif]} onPress={() => setTypeUtilisateur('chargeur')}>
+                    <Text style={styles.typeTxt}>Chargeur</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.typeBtn, typeUtilisateur === 'transporteur' && styles.typeBtnActif]} onPress={() => setTypeUtilisateur('transporteur')}>
+                        <Text style={styles.typeTxt}>Transporteur</Text>
+                        </TouchableOpacity>
+                        </View>
             <Text style={styles.btnTexte}>S inscrire</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/connexion')}>
@@ -57,4 +65,8 @@ const styles = StyleSheet.create({
     btn: { backgroundColor: '#1F4E79', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
     btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
     lien: { color: '#1F4E79', textAlign: 'center', marginTop: 10 },
+    typeContainer: {flexDirection: 'row', gap: 10, marginBottom: 15 },
+    typeBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 2, borderColor: '#ddd', alignItems: 'center', },
+    typeBtnActif: { backgroundColor: '#1F4E79', borderColor: '#1F4E79' },
+    typeTxt: { color: '#1F4E79', fontWeight: 'bold' },
 });

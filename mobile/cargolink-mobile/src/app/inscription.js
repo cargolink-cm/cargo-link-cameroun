@@ -43,10 +43,10 @@ export default function Inscription() {
             <TouchableOpacity style={styles.btn} onPress={handleInscription}>
             <View style={styles.typeContainer}>
                 <TouchableOpacity style={[styles.typeBtn, typeUtilisateur === 'chargeur' && styles.typeBtnActif]} onPress={() => setTypeUtilisateur('chargeur')}>
-                    <Text style={styles.typeTxt}>Chargeur</Text>
+                    <Text style={typeUtilisateur === 'chargeur' ? styles.typeTxtActif : styles.typeTxt}>Charheur</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.typeBtn, typeUtilisateur === 'transporteur' && styles.typeBtnActif]} onPress={() => setTypeUtilisateur('transporteur')}>
-                        <Text style={styles.typeTxt}>Transporteur</Text>
+                        <Text style={typeUtilisateur === 'transporteur' ? styles.typeTxtActif : styles.typeTxt}>Transporteur</Text>
                         </TouchableOpacity>
                         </View>
             <Text style={styles.btnTexte}>S inscrire</Text>
@@ -68,5 +68,6 @@ const styles = StyleSheet.create({
     typeContainer: {flexDirection: 'row', gap: 10, marginBottom: 15 },
     typeBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 2, borderColor: '#1F4E79', alignItems: 'center', backgroundColor: '#D6E4F0' },
     typeBtnActif: { backgroundColor: '#1F4E79', borderColor: '#1F4E79' },
-    typeTxt: { color: 'white', fontWeight: 'bold' },
+    typeTxtActif: { color: 'white', fontWeight: 'bold' },
+    typeTxt: { color: '#1F4E79', fontWeight: 'bold' },
 });

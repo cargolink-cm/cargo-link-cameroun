@@ -7,15 +7,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
 export default function Connexion() {
-    cont [identifiant, setIdentifiant] = useState('');
-    const [Ppassword, setPassword] = useState('');
+    const [identifiant, setIdentifiant] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleConnexion = async () => {
         try {
             const res = await axios.post(API_URL + '/auth/connexion', {
                 telehone: identifiant,
                 email: identifiant,
-                setPassword
+                password
             });
             await AsyncStorage.setItem('cargolink_token', res.data.token);
             const userData = res.data.user;
@@ -31,7 +31,7 @@ export default function Connexion() {
     };
 
     return (
-        <View style={Styles.container}>
+        <View style={styles.container}>
             <Text style={styles.titre}>Connexion Cargolink</Text>
             <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} />
             <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />

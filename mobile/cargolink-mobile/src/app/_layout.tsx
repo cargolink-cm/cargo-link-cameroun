@@ -1,9 +1,8 @@
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
 
 export default function Layout() {
   return (
-    <Stack>
+    <Stack initialRouteName="index">
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="inscription" options={{ headerShown: false }} />
       <Stack.Screen name="connexion" options={{ headerShown: false }} />

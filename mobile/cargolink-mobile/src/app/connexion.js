@@ -13,7 +13,7 @@ export default function Connexion() {
     const handleConnexion = async () => {
         try {
             const res = await axios.post(API_URL + '/auth/connexion', {
-                telehone: identifiant,
+                telephone: identifiant,
                 email: identifiant,
                 password
             });
@@ -23,7 +23,7 @@ export default function Connexion() {
             if (userData.type_utilisateur === 'transporteur') {
                 router.push('/transporteur');
             } else {
-            router.push('/dashboard');
+              router.push('/dashboard');
             }
         } catch (err) {
             Alert.alert('Erreur', 'Identifiants incorrects');
@@ -33,9 +33,9 @@ export default function Connexion() {
     return (
         <View style={styles.container}>
             <Text style={styles.titre}>Connexion Cargolink</Text>
-            <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} />
+            <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} onChangeText={setIdentifiant} />
             <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />
-            <TouchableOpacity style={styles.btn} onChangePress={handleConnexion}>
+            <TouchableOpacity style={styles.btn} onPress={handleConnexion}>
                 <Text style={styles.btnTexte}>Se connecter</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => router.push('/inscription')}>
@@ -47,7 +47,7 @@ export default function Connexion() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgraoundColor: 'white', padding: 30, justifyContent: 'center' },
-    titre: { fontSize: 28, fontWeight: 'bold', color: '#1F4E79', marginBotton: 30, textAlign: 'center' },
+    titre: { fontSize: 28, fontWeight: 'bold', color: '#1F4E79', marginBottom: 30, textAlign: 'center' },
     input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 15, fontSize: 16 },
     btn: { backgroundColor: '#1F4E79', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
     btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },

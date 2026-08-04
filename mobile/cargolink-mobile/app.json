@@ -15,7 +15,7 @@
       "bundleIdentifier": "com.exdivia.cargolink"
     },
     "android": {
-      "adaptativeIcon": {
+      "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptative-icon.png",
         "backgroundColor": "#1F4E79"
       },

@@ -1,6 +1,11 @@
 {
   "name": "cargolink-mobile",
   "main": "expo-router/entry",
+  "expo":{
+    "router":{
+      "root":"src/app"
+    }
+  },
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.4",

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
 export default function Inscription() {
+    const navigation = useNavigation();
     const [nomComplet, setNomComplet] = useState('');
     const [email, setEmail] = useState('');
     const [telephone, setTelephone] = useState('');
@@ -25,8 +26,8 @@ export default function Inscription() {
         const userData = res.data.user;
         await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
         if (userData.type_utilisateur === 'transporteur') {
-            router.push('/transporteurs');
-                router.push('/dashboard');
+            navigation.navigate('/transporteur');
+                navigation.navigate('/dashboard');
         }
             } catch (err) {
                 Alert.alert('Erreur', err.message || 'Inscription impossible');
@@ -51,7 +52,7 @@ export default function Inscription() {
                         </View>
             <Text style={styles.btnTexte}>S inscrire</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/connexion')}>
+            <TouchableOpacity onPress={() => navigation.navigate('/connexion')}>
             <Text style={styles.lien}>Deja inscrit / Se connecter</Text>
                 </TouchableOpacity>
                 </View>

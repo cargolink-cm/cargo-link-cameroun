@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
 export default function Connexion() {
+    const navigation = useNavigation();
     const [identifiant, setIdentifiant] = useState('');
     const [password, setPassword] = useState('');
 
@@ -21,9 +22,9 @@ export default function Connexion() {
             const userData = res.data.user;
             await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
             if (userData.type_utilisateur === 'transporteur') {
-                router.push('/transporteurs');
+                navigation.navigate('/transporteur');
             } else {
-              router.push('/dashboard');
+              navigation.navigate('/dashboard');
             }
         } catch (err) {
             Alert.alert('Erreur', 'Identifiants incorrects');
@@ -38,7 +39,7 @@ export default function Connexion() {
             <TouchableOpacity style={styles.btn} onPress={handleConnexion}>
                 <Text style={styles.btnTexte}>Se connecter</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push('/inscription')}>
+                <TouchableOpacity onPress={() => navigation.navigate('/inscription')}>
                     <Text style={styles.lien}>Pas encore inscrit ? S incrire</Text>
                     </TouchableOpacity>
                     </View>
@@ -46,7 +47,7 @@ export default function Connexion() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgraoundColor: 'white', padding: 30, justifyContent: 'center' },
+    container: { flex: 1, backgroundColor: 'white', padding: 30, justifyContent: 'center' },
     titre: { fontSize: 28, fontWeight: 'bold', color: '#1F4E79', marginBottom: 30, textAlign: 'center' },
     input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 15, fontSize: 16 },
     btn: { backgroundColor: '#1F4E79', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 15 },

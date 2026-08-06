@@ -42,7 +42,7 @@ export default function Transporteur() {
 
   const deconnecter = async () => {
     await AsyncStorage.clear();
-    router.push('/');
+    router.push('index/');
   };
 
   return (

@@ -1,6 +1,5 @@
+import React, { useState, useEffet } from 'react';
 import { router } from 'expo-router';
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Alter } from 'react-native';
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';

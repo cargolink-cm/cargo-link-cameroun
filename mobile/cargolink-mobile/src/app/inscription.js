@@ -25,7 +25,7 @@ export default function Inscription() {
         const userData = res.data.user;
         await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
         if (userData.type_utilisateur === 'transporteur') {
-            router.push('/transporteur');
+            router.push('/transporteurs');
                 router.push('/dashboard');
         }
             } catch (err) {

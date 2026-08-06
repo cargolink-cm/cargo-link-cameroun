@@ -21,7 +21,7 @@ export default function Connexion() {
             const userData = res.data.user;
             await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
             if (userData.type_utilisateur === 'transporteur') {
-                router.push('/transporteur');
+                router.push('/transporteurs');
             } else {
               router.push('/dashboard');
             }

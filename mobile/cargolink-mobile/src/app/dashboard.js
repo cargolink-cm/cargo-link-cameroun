@@ -44,7 +44,7 @@ export default function Dashboard() {
 
     const deconnecter = async () => {
         await AsyncStorage.clear();
-        router.push('/');
+        router.push('/index');
     };
 
     return (

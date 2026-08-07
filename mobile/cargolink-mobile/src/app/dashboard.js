@@ -15,7 +15,7 @@ export default function Dashboard() {
     const [budget, setBudget] = useState('');
 
     useEffect(() => {
-        chargeur();
+        charger();
     }, []);
 
     const charger = async () => {

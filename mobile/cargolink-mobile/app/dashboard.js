@@ -15,7 +15,7 @@ export default function Dashboard() {
     const [budget, setBudget] = useState('');
 
     useEffect(() => {
-        chargeur();
+        charger();
     }, []);
 
     const charger = async () => {
@@ -37,7 +37,7 @@ export default function Dashboard() {
             ville_arrivee: villeArrivee,
             date_souhaitee: '2026-08-01',
             poids_tonnes: 1,
-            budget_final: PageTransitionEvent(budget)
+            budget_final: parseInt(budget)
         }, { headers: { Authorization: 'Bearer ' + token } });
         charger();
     };
@@ -56,9 +56,9 @@ export default function Dashboard() {
                     </TouchableOpacity>
                     </View>
                     <TextInput style={styles.input} placeholder="Marchandise" value={marchandise} onChangeText={setMarchandise} />
-                    <TextInput style={styles.input} placeholder="Ville depart" value={villeDepart} />
+                    <TextInput style={styles.input} placeholder="Ville depart" value={villeDepart} onChangeText={setVilleDepart} />
                     <TextInput style={styles.input} placeholder="Ville arrivee" value={villeArrivee} onChangeText={setVilleArrivee} />
-                    <TextInput style={styles.input} placeholder="Budget FCFA" value={budget} onChangeText={setBudget} keyboardType="numeric" />
+                    <TextInput style={styles.input} placeholder="Budget FCFA" value={budget} keyboardType="numeric" onChangeText={setBudget} />
                     <TouchableOpacity style={styles.btn} onPress={publierDemande}>
                         <Text style={styles.btnTexte}>Publier la demande</Text>
                         </TouchableOpacity>

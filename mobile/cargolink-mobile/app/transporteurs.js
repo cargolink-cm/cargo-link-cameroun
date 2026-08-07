@@ -20,6 +20,7 @@ export default function Transporteur() {
   },[]);
 
   const charger = async () => {
+    try {
     const token = await AsyncStorage.getItem('cargolink_token');
     const userData = await AsyncStorage.getItem('cargolink_user');
     if (!token) { router.push('/connexion'); return; }
@@ -30,19 +31,27 @@ export default function Transporteur() {
     ]);
     setDemandes(res1.data);
     setMesDemandesAcceptees(res2.data);
+  } catch (err) {
+    console.log('Erreur charger transporteur:',err.response?.status,err.response?.data);
+  }
   };
 
   const accepter = async (id) => {
     if (!montants[id]) { Alert.alert('Erreur', 'Saisissez un montant'); return; }
+    try {
     const token = await AsyncStorage.getItem('cargolink_token');
     await axios.put(API_URL + '/demandes/' + id + '/accepter', { montant_final: parseInt(montants[id]) }, { headers: { Authorization: 'Bearer ' + token } });
     Alert.alert('Succes', 'Demande·acceptee !');
     charger();
+  } catch (err) {
+    console.log('Erreur accepter:',err.response?.status,err.response?.data);
+    Alert.alert('Erreur',"Impossible d'accepter la demande");
+  }
   };
 
   const deconnecter = async () => {
     await AsyncStorage.clear();
-    router.push('index/');
+    router.replace('index/');
   };
 
   return (

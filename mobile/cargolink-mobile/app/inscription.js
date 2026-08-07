@@ -22,14 +22,18 @@ export default function Inscription() {
                 password,
                 type_utilisateur: typeUtilisateur
         });
+        //Sauvegarde du token ET infos utilisateur
+        await AsyncStorage.setItem('cargolink_token',res.data.token);
         const userData = res.data.user;
         await AsyncStorage.setItem('cargolink_user', JSON.stringify(userData));
         if (userData.type_utilisateur === 'transporteur') {
-            router.push('/transporteurs');
-                router.push('/dashboard');
+            router.replace('/transporteurs');
+        } else {
+                router.replace('/dashboard');
         }
             } catch (err) {
-                Alert.alert('Erreur', err.message || 'Inscription impossible');
+                console.log('Erreur inscription:'.err.response?.status,err.response?.data); 
+                Alert.alert('Erreur', err.response?.data?.message || err.message ||'Inscription impossible');
             }
         };
 

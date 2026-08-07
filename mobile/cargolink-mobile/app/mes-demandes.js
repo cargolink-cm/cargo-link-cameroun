@@ -17,12 +17,16 @@ export default function MesDemandes() {
   }, []);
 
   const charger = async () => {
+    try {
     const token = await AsyncStorage.getItem('cargolink_token');
     if (!token) { router.push('/connexion'); return; }
     const res = await axios.get(API_URL + '/demandes/mes-demandes', {
       headers: { Authorization: 'Bearer ' + token }
     });
     setDemandes(res.data);
+  } catch (err) {
+    console.log('Erreur charger mes-demandes:',err.response?.status,err.response?.data);
+  }
   };
 
   return (

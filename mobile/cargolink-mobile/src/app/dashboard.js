@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
 export default function Dashboard() {
-    const [user, setUser] = userState(null);
+    const [user, setUser] = useState(null);
     const [demandes, setDemandes] = useState([]);
     const [marchandise, setMarchandise] = useState('');
     const [villeDepart, setVilleDepart] = useState('');

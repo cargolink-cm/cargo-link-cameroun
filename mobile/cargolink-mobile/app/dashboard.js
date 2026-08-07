@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Alter } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,14 +19,18 @@ export default function Dashboard() {
     }, []);
 
     const charger = async () => {
+        try {
         const token = await AsyncStorage.getItem('cargolink_token');
         const userData = await AsyncStorage.getItem('cargolink_user');
         if (!token) { router.push('/connexion'); return; }
-        setUser(JSON.parse(userData));
+        if (userData) setUser(JSON.parse(userData));
         const res = await axios.get(API_URL + '/demandes/disponibles', {
             headers: { Authorization: 'Bearer ' + token }
         });
         setDemandes(res.data);
+    } catch (error) {
+        console.log('Erreur charger',error);
+    }
     };
 
     const publierDemande = async () => {

@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "CargoLink Cameroun",
+    "slug": "cargolink-cameroun",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cargolink",
+    "plugins": ["expo-router"],
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1F4E79"
+      },
+      "package": "com.exdivia.cargolink"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "33da0e39-c18a-4dd4-9f58-482a266f187a"
+      }
+    }
+  }
+}

@@ -39,8 +39,7 @@ export default function Transporteurs() {
     }
   };
 
-  const accepter = async (id: number) => {
-    if (!montants[id]) { Alert.alert('Erreur', 'Saisissez un montant'); return; }
+  const confirmerAcceptation = async (id: number) => {
     try {
       const token = await AsyncStorage.getItem('cargolink_token');
       await axios.put(API_URL + '/demandes/' + id + '/accepter',
@@ -52,6 +51,22 @@ export default function Transporteurs() {
     } catch (err) {
       Alert.alert('Erreur', "Impossible d'accepter");
     }
+  };
+
+  const accepter = async (id: number, budgetChargeur?: number) => {
+    if (!montants[id]) { Alert.alert('Erreur', 'Saisissez un montant'); return; }
+    if (budgetChargeur && parseInt(montants[id]) > budgetChargeur) {
+      Alert.alert(
+        'Attention',
+        'Votre montant depasse le budget du chargeur (' + budgetChargeur.toLocaleString() + ' FCFA). Voulez-vous continuer ?',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Continuer quand meme', onPress: () => confirmerAcceptation(id) }
+        ]
+      );
+      return;
+    }
+    confirmerAcceptation(id);
   };
 
   const deconnecter = async () => {
@@ -91,7 +106,7 @@ export default function Transporteurs() {
               <Text style={styles.recapVert}>Vous percevrez: {Math.round(parseInt(montants[item.id]) * 0.93).toLocaleString()} FCFA</Text>
             </View>
           )}
-          <TouchableOpacity style={styles.btn} onPress={() => accepter(item.id)}>
+          <TouchableOpacity style={styles.btn} onPress={() => accepter(item.id, item.budget_final)}>
             <Text style={styles.btnTexte}>Accepter cette demande</Text>
           </TouchableOpacity>
         </View>

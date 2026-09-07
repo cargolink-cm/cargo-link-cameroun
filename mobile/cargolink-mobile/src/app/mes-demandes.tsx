@@ -58,7 +58,7 @@ export default function MesDemandes() {
             <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
           ) : item.statut === 'acceptee' ? (
             <View style={styles.commissionBox}>
-              <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero Orange 680893650 ou MTN 689925673 EXDIVIA SARL chargeur pour recevoir le contact</Text>
+              <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero MTN 680893650 ou Orange 689925673 EXDIVIA SARL pour recevoir le contact du transporteur</Text>
             </View>
           ) : null}
         </View>

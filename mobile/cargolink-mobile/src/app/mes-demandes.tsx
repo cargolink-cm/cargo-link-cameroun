@@ -55,8 +55,10 @@ export default function MesDemandes() {
           <Text>Statut: <Text style={{ color: item.statut === 'acceptee' ? 'green' : 'orange', fontWeight: 'bold' }}>{item.statut}</Text></Text>
           {item.transporteur_nom && <Text>Transporteur: {item.transporteur_nom}</Text>}
           {item.contact_debloque ? (
-            <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
-              <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
+            <>
+                <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
+                <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
+              </>
           ) : item.statut === 'acceptee' ? (
             <View style={styles.commissionBox}>
               <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero MTN 680893650 ou Orange 689925673 EXDIVIA SARL pour recevoir le contact du transporteur. Vous devrez ensuite remettre {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA au transporteur</Text>

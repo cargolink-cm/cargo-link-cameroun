@@ -84,6 +84,8 @@ export default function Admin() {
         <thead>
           <tr>
             <th>ID</th>
+            <th>Chargeur</th>
+            <th>Transporteur</th>
             <th>Marchandise</th>
             <th>Trajet</th>
             <th>Montant</th>
@@ -96,6 +98,8 @@ export default function Admin() {
           {demandes.map(d => (
             <tr key={d.id}>
               <td>{d.id}</td>
+              <td>{d.chargeur_nom || '-'}</td>
+              <td>{d.transporteur_nom || '-'}</td>
               <td>{d.marchandise}</td>
               <td>{d.ville_depart} →{d.ville_arrivee}</td>
               <td>{d.montant_final?.toLocaleString()} FCFA</td>

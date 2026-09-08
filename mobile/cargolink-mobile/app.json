@@ -2,7 +2,7 @@
   "expo": {
     "name": "Cargolink-Cameroun",
     "slug": "cargolink-cameroun",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cargolink",
@@ -20,7 +20,7 @@
         "backgroundColor": "#1F4E79"
       },
       "package": "com.exdivia.cargolink",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "bundler": "metro"

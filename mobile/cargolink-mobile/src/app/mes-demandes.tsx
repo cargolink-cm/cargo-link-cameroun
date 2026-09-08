@@ -56,9 +56,10 @@ export default function MesDemandes() {
           {item.transporteur_nom && <Text>Transporteur: {item.transporteur_nom}</Text>}
           {item.contact_debloque ? (
             <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
+              <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
           ) : item.statut === 'acceptee' ? (
             <View style={styles.commissionBox}>
-              <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero MTN 680893650 ou Orange 689925673 EXDIVIA SARL pour recevoir le contact du transporteur</Text>
+              <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero MTN 680893650 ou Orange 689925673 EXDIVIA SARL pour recevoir le contact du transporteur. Vous devrez ensuite remettre {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA au transporteur</Text>
             </View>
           ) : null}
         </View>
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
   card: { backgroundColor: 'white', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#1F4E79' },
   cardTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginBottom: 5 },
   contact: { color: '#1A5E38', fontWeight: 'bold', marginTop: 5 },
+  montantAVerser: { color: '#C55A11', fontWeight: 'bold', marginTop: 3, fontSize: 15 },
   commissionBox: { backgroundColor: '#FCE4D6', padding: 8, borderRadius: 6, marginTop: 5 },
   commissionText: { color: '#C55A11', fontSize: 13 },
 });

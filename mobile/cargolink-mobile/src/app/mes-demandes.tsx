@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,14 +12,30 @@ interface Demande {
   ville_depart: string;
   ville_arrivee: string;
   statut: string;
+  budget_final?: number;
   transporteur_nom?: string;
   transporteur_tel?: string;
   montant_final?: number;
   contact_debloque?: boolean;
+  immatriculation?: string;
+  carte_grise?: string;
+}
+
+interface Proposition {
+  id: number;
+  transporteur_id: number;
+  montant_propose: number;
+  immatriculation: string;
+  carte_grise?: string;
+  transporteur_nom: string;
+  transporteur_tel: string;
+  transporteur_note?: string;
 }
 
 export default function MesDemandes() {
   const [demandes, setDemandes] = useState<Demande[]>([]);
+  const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({});
+  const [demandeOuverte, setDemandeOuverte] = useState<number | null>(null);
 
   useEffect(() => {
     charger();
@@ -40,6 +56,50 @@ export default function MesDemandes() {
     }
   };
 
+  const voirPropositions = async (demandeId: number) => {
+    if (demandeOuverte === demandeId) {
+      setDemandeOuverte(null);
+      return;
+    }
+    try {
+      const token = await AsyncStorage.getItem('cargolink_token');
+      const res = await axios.get(API_URL + '/demandes/' + demandeId + '/propositions', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      setPropositions({ ...propositions, [demandeId]: res.data });
+      setDemandeOuverte(demandeId);
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de charger les propositions');
+    }
+  };
+
+  const choisirProposition = async (demandeId: number, propositionId: number, montant: number) => {
+    Alert.alert(
+      'Confirmer le choix',
+      'Voulez-vous choisir cette proposition de ' + montant.toLocaleString() + ' FCFA ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Confirmer',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('cargolink_token');
+              await axios.put(API_URL + '/demandes/' + demandeId + '/choisir-proposition',
+                { proposition_id: propositionId },
+                { headers: { Authorization: 'Bearer ' + token } }
+              );
+              Alert.alert('Succes', 'Proposition choisie ! Vous pouvez maintenant payer la commission.');
+              setDemandeOuverte(null);
+              charger();
+            } catch (error) {
+              Alert.alert('Erreur', 'Impossible de choisir cette proposition');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -52,17 +112,60 @@ export default function MesDemandes() {
         <View key={item.id} style={styles.card}>
           <Text style={styles.cardTitre}>{item.marchandise}</Text>
           <Text>{item.ville_depart} → {item.ville_arrivee}</Text>
-          <Text>Statut: <Text style={{ color: item.statut === 'acceptee' ? 'green' : 'orange', fontWeight: 'bold' }}>{item.statut}</Text></Text>
+          <Text>Budget: {item.budget_final?.toLocaleString()} FCFA</Text>
+          <Text>Statut: <Text style={{ color: item.statut === 'acceptee' ? 'green' : item.statut === 'proposee' ? '#C55A11' : 'orange', fontWeight: 'bold' }}>{item.statut}</Text></Text>
+
           {item.transporteur_nom && <Text>Transporteur: {item.transporteur_nom}</Text>}
+
           {item.contact_debloque ? (
             <>
-                <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
-                <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
-              </>
+              <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
+              {item.immatriculation && <Text style={styles.info}>Immatriculation: {item.immatriculation}</Text>}
+              {item.carte_grise && (
+                <Text style={styles.info}>Carte grise: fournie par le transporteur</Text>
+              )}
+              <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
+            </>
           ) : item.statut === 'acceptee' ? (
             <View style={styles.commissionBox}>
               <Text style={styles.commissionText}>Payez {Math.round((item.montant_final || 0) * 0.07).toLocaleString()} FCFA sur le numero MTN 680893650 ou Orange 689925673 EXDIVIA SARL pour recevoir le contact du transporteur. Vous devrez ensuite remettre {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA au transporteur</Text>
             </View>
+          ) : item.statut === 'en_attente' || item.statut === 'proposee' ? (
+            <>
+              {item.statut === 'proposee' && (
+                <Text style={styles.attenteMeilleure}>Votre demande reste ouverte en attente d'une meilleure offre</Text>
+              )}
+              <TouchableOpacity style={styles.btnVoirPropositions} onPress={() => voirPropositions(item.id)}>
+                <Text style={styles.btnVoirPropositionsTexte}>
+                  {demandeOuverte === item.id ? 'Masquer les propositions' : 'Voir les propositions recues'}
+                </Text>
+              </TouchableOpacity>
+
+              {demandeOuverte === item.id && (
+                <View style={styles.propositionsContainer}>
+                  {propositions[item.id]?.length === 0 && (
+                    <Text style={styles.aucuneProposition}>Aucune proposition recue pour le moment</Text>
+                  )}
+                  {propositions[item.id]?.map(prop => (
+                    <View key={prop.id} style={styles.propositionCard}>
+                      <Text style={styles.propositionMontant}>{prop.montant_propose.toLocaleString()} FCFA</Text>
+                      {item.budget_final && prop.montant_propose > item.budget_final && (
+                        <Text style={styles.depasseBudget}>Depasse votre budget de {(prop.montant_propose - item.budget_final).toLocaleString()} FCFA</Text>
+                      )}
+                      <Text>Transporteur: {prop.transporteur_nom}</Text>
+                      <Text>Note: {prop.transporteur_note || 'Pas encore note'}/5</Text>
+                      <Text>Immatriculation: {prop.immatriculation}</Text>
+                      <TouchableOpacity
+                        style={styles.btnChoisir}
+                        onPress={() => choisirProposition(item.id, prop.id, prop.montant_propose)}
+                      >
+                        <Text style={styles.btnChoisirTexte}>Choisir cette proposition</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </>
           ) : null}
         </View>
       ))}
@@ -78,7 +181,18 @@ const styles = StyleSheet.create({
   card: { backgroundColor: 'white', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#1F4E79' },
   cardTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginBottom: 5 },
   contact: { color: '#1A5E38', fontWeight: 'bold', marginTop: 5 },
+  info: { color: '#555', marginTop: 3, fontSize: 13 },
   montantAVerser: { color: '#C55A11', fontWeight: 'bold', marginTop: 3, fontSize: 15 },
   commissionBox: { backgroundColor: '#FCE4D6', padding: 8, borderRadius: 6, marginTop: 5 },
   commissionText: { color: '#C55A11', fontSize: 13 },
+  attenteMeilleure: { color: '#C55A11', fontSize: 13, fontStyle: 'italic', marginTop: 5, marginBottom: 5 },
+  btnVoirPropositions: { backgroundColor: '#1F4E79', padding: 10, borderRadius: 6, marginTop: 8, alignItems: 'center' },
+  btnVoirPropositionsTexte: { color: 'white', fontWeight: 'bold', fontSize: 13 },
+  propositionsContainer: { marginTop: 10 },
+  aucuneProposition: { color: '#888', fontStyle: 'italic', textAlign: 'center', padding: 10 },
+  propositionCard: { backgroundColor: '#f9f9f9', padding: 12, borderRadius: 8, marginTop: 8, borderWidth: 1, borderColor: '#eee' },
+  propositionMontant: { fontSize: 18, fontWeight: 'bold', color: '#1F4E79' },
+  depasseBudget: { color: '#C55A11', fontSize: 12, marginBottom: 5 },
+  btnChoisir: { backgroundColor: '#1A5E38', padding: 10, borderRadius: 6, marginTop: 8, alignItems: 'center' },
+  btnChoisirTexte: { color: 'white', fontWeight: 'bold', fontSize: 13 },
 });

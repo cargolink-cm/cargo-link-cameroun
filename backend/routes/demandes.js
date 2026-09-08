@@ -38,6 +38,113 @@ router.get('/disponibles', auth, async (req, res) => {
     }
 });
 
+// NOUVELLE ROUTE - Proposer un montant sur une demande
+router.post('/:id/proposer', auth, async (req, res) => {
+    const { montant_propose, immatriculation, carte_grise } = req.body;
+    const demandeId = req.params.id;
+
+    if (!montant_propose || !immatriculation) {
+        return res.status(400).json({ error: 'Montant et immatriculation obligatoires' });
+    }
+
+    try {
+        // Récupérer le budget du chargeur pour cette demande
+        const demandeResult = await pool.query(
+            'SELECT budget_final, statut FROM demandes_transport WHERE id = $1',
+            [demandeId]
+        );
+
+        if (demandeResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Demande introuvable' });
+        }
+
+        const demande = demandeResult.rows[0];
+
+        if (demande.statut !== 'en_attente') {
+            return res.status(400).json({ error: 'Cette demande n\'est plus disponible' });
+        }
+
+        // Enregistrer la proposition
+        await pool.query(
+            'INSERT INTO propositions (demande_id, transporteur_id, montant_propose, immatriculation, carte_grise) VALUES ($1,$2,$3,$4,$5)',
+            [demandeId, req.user.id, montant_propose, immatriculation, carte_grise || null]
+        );
+
+        // Si le montant proposé est <= au budget du chargeur, la demande se ferme
+        if (parseInt(montant_propose) <= parseInt(demande.budget_final)) {
+            await pool.query(
+                'UPDATE demandes_transport SET statut = $1 WHERE id = $2',
+                ['proposee', demandeId]
+            );
+            res.json({ message: 'Proposition envoyee. Demande fermee aux autres transporteurs.', dansLeBudget: true });
+        } else {
+            res.json({ message: 'Votre proposition depasse le budget du chargeur. La demande reste visible pour d\'autres offres.', dansLeBudget: false });
+        }
+    } catch (error) {
+        console.log('ERREUR PROPOSITION:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// NOUVELLE ROUTE - Voir toutes les propositions reçues pour une demande (chargeur)
+router.get('/:id/propositions', auth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT p.*, u.nom_complet as transporteur_nom, u.telephone as transporteur_tel, u.note_moyenne as transporteur_note
+             FROM propositions p
+             JOIN users u ON p.transporteur_id = u.id
+             WHERE p.demande_id = $1
+             ORDER BY p.montant_propose ASC, p.created_at ASC`,
+            [req.params.id]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// NOUVELLE ROUTE - Le chargeur choisit une proposition
+router.put('/:id/choisir-proposition', auth, async (req, res) => {
+    const { proposition_id } = req.body;
+    const demandeId = req.params.id;
+
+    try {
+        const propResult = await pool.query(
+            'SELECT * FROM propositions WHERE id = $1 AND demande_id = $2',
+            [proposition_id, demandeId]
+        );
+
+        if (propResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Proposition introuvable' });
+        }
+
+        const proposition = propResult.rows[0];
+        const commission = Math.round(proposition.montant_propose * 0.07);
+        const montant_transporteur = proposition.montant_propose - commission;
+
+        await pool.query(
+            'UPDATE demandes_transport SET transporteur_id=$1, statut=$2, montant_final=$3, immatriculation=$4, carte_grise=$5 WHERE id=$6',
+            [proposition.transporteur_id, 'acceptee', proposition.montant_propose, proposition.immatriculation, proposition.carte_grise, demandeId]
+        );
+
+        await pool.query(
+            'INSERT INTO transactions (demande_id, montant_total, commission_exdivia, montant_transporteur) VALUES ($1,$2,$3,$4)',
+            [demandeId, proposition.montant_propose, commission, montant_transporteur]
+        );
+
+        await pool.query(
+            'UPDATE propositions SET statut = $1 WHERE id = $2',
+            ['acceptee', proposition_id]
+        );
+
+        res.json({ message: 'Proposition choisie avec succes' });
+    } catch (error) {
+        console.log('ERREUR CHOIX PROPOSITION:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Ancienne route acceptee gardee pour compatibilite
 router.put('/:id/accepter', auth, async (req, res) => {
     const { montant_final } = req.body;
     const commission = Math.round(montant_final * 0.07);
@@ -56,6 +163,7 @@ router.put('/:id/accepter', auth, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 router.get('/mes-demandes', auth, async (req, res) => {
     try {
         const result = await pool.query(
@@ -66,7 +174,8 @@ router.get('/mes-demandes', auth, async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});     
+});
+
 router.get('/mes-demandes-transporteur', auth, async (req, res) => {
     try {
         const result = await pool.query(
@@ -77,5 +186,6 @@ router.get('/mes-demandes-transporteur', auth, async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}),   
-module.exports = router; 
+});
+
+module.exports = router;

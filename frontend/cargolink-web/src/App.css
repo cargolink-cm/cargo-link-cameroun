@@ -140,13 +140,20 @@ bts-transporteur {
 
 .erreur { color: red; margin-bottom: 15px; text-align: center; }
 .admin-table th, .admin-table td {
-  padding: 8px 12px;
+  padding: 6px 8px;
   text-align: left;
   border: 1px solid #ddd;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 13px;
+  max-width: 120px;
 }
-    .admin-table {
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-    }
+.admin-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+.admin-table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+}

@@ -34,13 +34,7 @@ interface Proposition {
 
 export default function MesDemandes() {
   const [demandes, setDemandes] = useState<Demande[]>([]);
-  const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({  lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
-  imageCarteGrise: { width: '100%', height: 400 },
-  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
-});
+  const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({});
   const [demandeOuverte, setDemandeOuverte] = useState<number | null>(null);
   const [carteGriseAffichee, setCarteGriseAffichee] = useState<string | null>(null);
 
@@ -56,13 +50,7 @@ export default function MesDemandes() {
       if (!token) { router.replace('/connexion'); return; }
       const res = await axios.get(API_URL + '/demandes/mes-demandes', {
         headers: { Authorization: 'Bearer ' + token }
-        lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
-  imageCarteGrise: { width: '100%', height: 400 },
-  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
-});
+      });
       setDemandes(res.data);
     } catch (error) {
       console.log('Erreur mes-demandes:', error);
@@ -78,20 +66,8 @@ export default function MesDemandes() {
       const token = await AsyncStorage.getItem('cargolink_token');
       const res = await axios.get(API_URL + '/demandes/' + demandeId + '/propositions', {
         headers: { Authorization: 'Bearer ' + token }
-        lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
-  imageCarteGrise: { width: '100%', height: 400 },
-  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
-});
-      setPropositions({ ...propositions, [demandeId]: res.data   lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
-  imageCarteGrise: { width: '100%', height: 400 },
-  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
-});
+      });
+      setPropositions({ ...propositions, [demandeId]: res.data });
       setDemandeOuverte(demandeId);
     } catch (error) {
       Alert.alert('Erreur', 'Impossible de charger les propositions');
@@ -182,6 +158,11 @@ export default function MesDemandes() {
                       <Text>Transporteur: {prop.transporteur_nom}</Text>
                       <Text>Note: {prop.transporteur_note || 'Pas encore note'}/5</Text>
                       <Text>Immatriculation: {prop.immatriculation}</Text>
+                      {prop.carte_grise && (
+                        <TouchableOpacity onPress={() => setCarteGriseAffichee(prop.carte_grise || null)}>
+                          <Text style={styles.lienCarteGrise}>Voir la carte grise</Text>
+                        </TouchableOpacity>
+                      )}
                       <TouchableOpacity
                         style={styles.btnChoisir}
                         onPress={() => choisirProposition(item.id, prop.id, prop.montant_propose)}
@@ -196,6 +177,7 @@ export default function MesDemandes() {
           ) : null}
         </View>
       ))}
+
       <Modal visible={!!carteGriseAffichee} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>

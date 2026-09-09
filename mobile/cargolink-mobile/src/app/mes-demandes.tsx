@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Modal, Image } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,8 +34,15 @@ interface Proposition {
 
 export default function MesDemandes() {
   const [demandes, setDemandes] = useState<Demande[]>([]);
-  const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({});
+  const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({  lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
+  imageCarteGrise: { width: '100%', height: 400 },
+  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
+});
   const [demandeOuverte, setDemandeOuverte] = useState<number | null>(null);
+  const [carteGriseAffichee, setCarteGriseAffichee] = useState<string | null>(null);
 
   useEffect(() => {
     charger();
@@ -49,7 +56,13 @@ export default function MesDemandes() {
       if (!token) { router.replace('/connexion'); return; }
       const res = await axios.get(API_URL + '/demandes/mes-demandes', {
         headers: { Authorization: 'Bearer ' + token }
-      });
+        lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
+  imageCarteGrise: { width: '100%', height: 400 },
+  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
+});
       setDemandes(res.data);
     } catch (error) {
       console.log('Erreur mes-demandes:', error);
@@ -65,8 +78,20 @@ export default function MesDemandes() {
       const token = await AsyncStorage.getItem('cargolink_token');
       const res = await axios.get(API_URL + '/demandes/' + demandeId + '/propositions', {
         headers: { Authorization: 'Bearer ' + token }
-      });
-      setPropositions({ ...propositions, [demandeId]: res.data });
+        lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
+  imageCarteGrise: { width: '100%', height: 400 },
+  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
+});
+      setPropositions({ ...propositions, [demandeId]: res.data   lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
+  imageCarteGrise: { width: '100%', height: 400 },
+  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
+});
       setDemandeOuverte(demandeId);
     } catch (error) {
       Alert.alert('Erreur', 'Impossible de charger les propositions');
@@ -122,7 +147,9 @@ export default function MesDemandes() {
               <Text style={styles.contact}>Tel transporteur: {item.transporteur_tel}</Text>
               {item.immatriculation && <Text style={styles.info}>Immatriculation: {item.immatriculation}</Text>}
               {item.carte_grise && (
-                <Text style={styles.info}>Carte grise: fournie par le transporteur</Text>
+                <TouchableOpacity onPress={() => setCarteGriseAffichee(item.carte_grise || null)}>
+                  <Text style={styles.lienCarteGrise}>Voir la carte grise</Text>
+                </TouchableOpacity>
               )}
               <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
             </>
@@ -169,6 +196,18 @@ export default function MesDemandes() {
           ) : null}
         </View>
       ))}
+      <Modal visible={!!carteGriseAffichee} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {carteGriseAffichee && (
+              <Image source={{ uri: carteGriseAffichee }} style={styles.imageCarteGrise} resizeMode="contain" />
+            )}
+            <TouchableOpacity style={styles.btnFermerModal} onPress={() => setCarteGriseAffichee(null)}>
+              <Text style={styles.btnFermerModalTexte}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -195,4 +234,10 @@ const styles = StyleSheet.create({
   depasseBudget: { color: '#C55A11', fontSize: 12, marginBottom: 5 },
   btnChoisir: { backgroundColor: '#1A5E38', padding: 10, borderRadius: 6, marginTop: 8, alignItems: 'center' },
   btnChoisirTexte: { color: 'white', fontWeight: 'bold', fontSize: 13 },
+  lienCarteGrise: { color: '#1F4E79', textDecorationLine: 'underline', marginTop: 5, fontWeight: 'bold' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: 'white', borderRadius: 12, padding: 15, width: '90%', maxHeight: '80%' },
+  imageCarteGrise: { width: '100%', height: 400 },
+  btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
+  btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
 });

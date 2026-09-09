@@ -61,7 +61,7 @@ export default function Transporteurs() {
       Alert.alert('Erreur', 'Permission camera refusee');
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({ quality: 0.5, base64: true });
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.2, base64: true });
     if (!result.canceled && result.assets[0].base64) {
       setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + result.assets[0].base64 });
     }
@@ -73,7 +73,7 @@ export default function Transporteurs() {
       Alert.alert('Erreur', 'Permission galerie refusee');
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.5, base64: true });
+    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.2, base64: true });
     if (!result.canceled && result.assets[0].base64) {
       setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + result.assets[0].base64 });
     }

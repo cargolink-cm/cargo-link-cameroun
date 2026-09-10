@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
@@ -61,9 +62,16 @@ export default function Transporteurs() {
       Alert.alert('Erreur', 'Permission camera refusee');
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({ quality: 0.2, base64: true });
-    if (!result.canceled && result.assets[0].base64) {
-      setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + result.assets[0].base64 });
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.5 });
+    if (!result.canceled && result.assets[0].uri) {
+      const redimensionnee = await ImageManipulator.manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: 1000 } }],
+        { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+      );
+      if (redimensionnee.base64) {
+        setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + redimensionnee.base64 });
+      }
     }
   };
 
@@ -73,9 +81,16 @@ export default function Transporteurs() {
       Alert.alert('Erreur', 'Permission galerie refusee');
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.2, base64: true });
-    if (!result.canceled && result.assets[0].base64) {
-      setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + result.assets[0].base64 });
+    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.5 });
+    if (!result.canceled && result.assets[0].uri) {
+      const redimensionnee = await ImageManipulator.manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: 1000 } }],
+        { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+      );
+      if (redimensionnee.base64) {
+        setCartesGrises({ ...cartesGrises, [id]: 'data:image/jpeg;base64,' + redimensionnee.base64 });
+      }
     }
   };
 

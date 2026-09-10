@@ -13,6 +13,7 @@ interface Demande {
   ville_arrivee: string;
   statut: string;
   budget_final?: number;
+  transporteur_id?: number;
   transporteur_nom?: string;
   transporteur_tel?: string;
   montant_final?: number;
@@ -37,6 +38,10 @@ export default function MesDemandes() {
   const [propositions, setPropositions] = useState<{ [key: number]: Proposition[] }>({});
   const [demandeOuverte, setDemandeOuverte] = useState<number | null>(null);
   const [carteGriseAffichee, setCarteGriseAffichee] = useState<string | null>(null);
+  const [noteModalOuvert, setNoteModalOuvert] = useState<number | null>(null);
+  const [noteChoisie, setNoteChoisie] = useState(5);
+  const [commentaire, setCommentaire] = useState('');
+  const [demandesNotees, setDemandesNotees] = useState<number[]>([]);
 
   useEffect(() => {
     charger();
@@ -54,6 +59,25 @@ export default function MesDemandes() {
       setDemandes(res.data);
     } catch (error) {
       console.log('Erreur mes-demandes:', error);
+    }
+  };
+
+  const envoyerNotation = async (demandeId: number, evalueId: number) => {
+    try {
+      const token = await AsyncStorage.getItem('cargolink_token');
+      await axios.post(API_URL.replace('/demandes','') + '/notations', {
+        evalue_id: evalueId,
+        demande_id: demandeId,
+        note: noteChoisie,
+        commentaire
+      }, { headers: { Authorization: 'Bearer ' + token } });
+      Alert.alert('Merci', 'Votre notation a ete envoyee !');
+      setDemandesNotees([...demandesNotees, demandeId]);
+      setNoteModalOuvert(null);
+      setCommentaire('');
+      setNoteChoisie(5);
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible d envoyer la notation');
     }
   };
 
@@ -128,6 +152,13 @@ export default function MesDemandes() {
                 </TouchableOpacity>
               )}
               <Text style={styles.montantAVerser}>Montant a verser: {Math.round((item.montant_final || 0) * 0.93).toLocaleString()} FCFA</Text>
+              {!demandesNotees.includes(item.id) ? (
+                <TouchableOpacity style={styles.btnNoter} onPress={() => setNoteModalOuvert(item.id)}>
+                  <Text style={styles.btnNoterTexte}>Noter le transporteur</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={styles.notationEnvoyee}>Merci pour votre notation !</Text>
+              )}
             </>
           ) : item.statut === 'acceptee' ? (
             <View style={styles.commissionBox}>
@@ -157,12 +188,6 @@ export default function MesDemandes() {
                       )}
                       <Text>Transporteur: {prop.transporteur_nom}</Text>
                       <Text>Note: {prop.transporteur_note || 'Pas encore note'}/5</Text>
-                      <Text>Immatriculation: {prop.immatriculation}</Text>
-                      {prop.carte_grise && (
-                        <TouchableOpacity onPress={() => setCarteGriseAffichee(prop.carte_grise || null)}>
-                          <Text style={styles.lienCarteGrise}>Voir la carte grise</Text>
-                        </TouchableOpacity>
-                      )}
                       <TouchableOpacity
                         style={styles.btnChoisir}
                         onPress={() => choisirProposition(item.id, prop.id, prop.montant_propose)}
@@ -177,6 +202,38 @@ export default function MesDemandes() {
           ) : null}
         </View>
       ))}
+
+      <Modal visible={noteModalOuvert !== null} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitre}>Noter le transporteur</Text>
+            <View style={styles.notesRow}>
+              {[1, 2, 3, 4, 5].map(n => (
+                <TouchableOpacity key={n} onPress={() => setNoteChoisie(n)} style={[styles.noteButton, noteChoisie === n && styles.noteButtonActif]}>
+                  <Text style={[styles.noteButtonTexte, noteChoisie === n && styles.noteButtonTexteActif]}>{n}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.noteLabel}>
+              {noteChoisie === 5 ? 'Excellent' : noteChoisie === 4 ? 'Tres bien' : noteChoisie === 3 ? 'Bien' : noteChoisie === 2 ? 'Passable' : 'Mauvais'}
+            </Text>
+            <TouchableOpacity
+              style={styles.btnEnvoyerNote}
+              onPress={() => {
+                const demande = demandes.find(d => d.id === noteModalOuvert);
+                if (demande && demande.transporteur_id && noteModalOuvert) {
+                  envoyerNotation(noteModalOuvert, demande.transporteur_id);
+                }
+              }}
+            >
+              <Text style={styles.btnEnvoyerNoteTexte}>Envoyer la notation</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnAnnulerNote} onPress={() => setNoteModalOuvert(null)}>
+              <Text style={styles.btnAnnulerNoteTexte}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Modal visible={!!carteGriseAffichee} transparent animationType="fade">
         <View style={styles.modalOverlay}>
@@ -222,4 +279,18 @@ const styles = StyleSheet.create({
   imageCarteGrise: { width: '100%', height: 400 },
   btnFermerModal: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 10 },
   btnFermerModalTexte: { color: 'white', fontWeight: 'bold' },
+  btnNoter: { backgroundColor: '#FFD700', padding: 10, borderRadius: 6, marginTop: 8, alignItems: 'center' },
+  btnNoterTexte: { color: '#1F4E79', fontWeight: 'bold' },
+  notationEnvoyee: { color: '#1A5E38', fontStyle: 'italic', marginTop: 8, textAlign: 'center' },
+  modalTitre: { fontSize: 18, fontWeight: 'bold', color: '#1F4E79', marginBottom: 15, textAlign: 'center' },
+  notesRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 10 },
+  noteButton: { width: 45, height: 45, borderRadius: 22, borderWidth: 2, borderColor: '#1F4E79', justifyContent: 'center', alignItems: 'center' },
+  noteButtonActif: { backgroundColor: '#1F4E79' },
+  noteButtonTexte: { color: '#1F4E79', fontWeight: 'bold', fontSize: 16 },
+  noteButtonTexteActif: { color: 'white' },
+  noteLabel: { textAlign: 'center', color: '#555', marginBottom: 15, fontStyle: 'italic' },
+  btnEnvoyerNote: { backgroundColor: '#1A5E38', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
+  btnEnvoyerNoteTexte: { color: 'white', fontWeight: 'bold' },
+  btnAnnulerNote: { padding: 10, alignItems: 'center', marginTop: 5 },
+  btnAnnulerNoteTexte: { color: '#888' },
 });

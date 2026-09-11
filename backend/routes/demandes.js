@@ -39,12 +39,41 @@ router.get('/disponibles', auth, async (req, res) => {
 });
 
 // NOUVELLE ROUTE - Proposer un montant sur une demande
+function validerCarteGrise(carte_grise) {
+    if (!carte_grise) return true;
+
+    if (typeof carte_grise !== 'string') {
+        return false;
+    }
+
+    const estImageBase64 = carte_grise.startsWith('data:image/jpeg') ||
+                            carte_grise.startsWith('data:image/jpg') ||
+                            carte_grise.startsWith('data:image/png');
+
+    if (!estImageBase64) {
+        return false;
+    }
+
+    const tailleApprox = (carte_grise.length * 3) / 4;
+    const tailleMaxOctets = 5 * 1024 * 1024;
+
+    if (tailleApprox > tailleMaxOctets) {
+        return false;
+    }
+
+    return true;
+}
+
 router.post('/:id/proposer', auth, async (req, res) => {
     const { montant_propose, immatriculation, carte_grise } = req.body;
     const demandeId = req.params.id;
 
     if (!montant_propose || !immatriculation) {
         return res.status(400).json({ error: 'Montant et immatriculation obligatoires' });
+    }
+
+    if (!validerCarteGrise(carte_grise)) {
+        return res.status(400).json({ error: 'Fichier carte grise invalide. Formats acceptes: JPEG, PNG (max 5 Mo)' });
     }
 
     try {

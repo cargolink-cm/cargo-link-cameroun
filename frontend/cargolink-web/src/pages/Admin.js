@@ -10,6 +10,8 @@ export default function Admin() {
   const [demandes, setDemandes] = useState([]);
   const [totalCommission, setTotalCommission] = useState(0);
   const [utilisateurs, setUtilisateurs] = useState([]);
+  const [filtreDemandes, setFiltreDemandes] = useState('attente');
+  const [filtreUtilisateurs, setFiltreUtilisateurs] = useState('chargeur');
 
   const ADMIN_PASSWORD = 'exdivia2026';
 
@@ -62,9 +64,19 @@ export default function Admin() {
     );
   }
 
+  const demandesEnAttente = demandes.filter(d => !d.contact_debloque);
+  const demandesValidees = demandes.filter(d => d.contact_debloque);
+  const demandesAffichees = filtreDemandes === 'attente' ? demandesEnAttente : demandesValidees;
+
+  const chargeurs = utilisateurs.filter(u => u.type_utilisateur === 'chargeur');
+  const transporteurs = utilisateurs.filter(u => u.type_utilisateur === 'transporteur');
+  const utilisateursAffiches = filtreUtilisateurs === 'chargeur' ? chargeurs : transporteurs;
+
   return (
     <div className="admin-dashboard">
       <h1>Dashboard Admin EXDIVIA SARL</h1>
+
+      {/* STATISTIQUES EN HAUT */}
       <div className="admin-stats">
         <div className="stat-card">
           <h3>Total Commissions</h3>
@@ -78,67 +90,128 @@ export default function Admin() {
           <h3>Demandes actives</h3>
           <p className="stat-number">{demandes.length}</p>
         </div>
+        <div className="stat-card">
+          <h3>Utilisateurs inscrits</h3>
+          <p className="stat-number">{utilisateurs.length}</p>
+        </div>
       </div>
-      <h2>Demandes acceptées — En attente de paiement commission</h2>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Chargeur</th>
-            <th>Transporteur</th>
-            <th>Marchandise</th>
-            <th>Trajet</th>
-            <th>Montant</th>
-            <th>Commission 7%</th>
-            <th>Statut</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {demandes.map(d => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>{d.chargeur_nom || '-'}</td>
-              <td>{d.transporteur_nom || '-'}</td>
-              <td>{d.marchandise}</td>
-              <td>{d.ville_depart} →{d.ville_arrivee}</td>
-              <td>{d.montant_final?.toLocaleString()} FCFA</td>
-              <td style={{color:'#C55A11',fontWeight:'bold'}}>{d.commission_exdivia?.toLocaleString()} FCFA</td>
-              <td>{d.contact_debloque ? 'Contact débloqué' : 'En attente paiement'}</td>
-              <td>
-                {!d.contact_debloque && (
-                  <button onClick={() => debloquerContact(d.id)} className="btn-debloquer">Débloquer contact</button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Utilisateurs inscrits ({utilisateurs.length})</h2>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nom</th>
-            <th>Téléphone</th>
-            <th>Type</th>
-            <th>Note</th>
-            <th>Date inscription</th>
-            </tr>
+
+      {/* CARRE 1 - GESTION DES DEMANDES */}
+      <div className="admin-section">
+        <h2>Gestion des demandes</h2>
+        <div className="admin-tabs">
+          <button
+            className={filtreDemandes === 'attente' ? 'tab-actif' : 'tab'}
+            onClick={() => setFiltreDemandes('attente')}
+          >
+            En attente ({demandesEnAttente.length})
+          </button>
+          <button
+            className={filtreDemandes === 'validee' ? 'tab-actif' : 'tab'}
+            onClick={() => setFiltreDemandes('validee')}
+          >
+            Déjà validées ({demandesValidees.length})
+          </button>
+        </div>
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Chargeur</th>
+                <th>Transporteur</th>
+                <th>Marchandise</th>
+                <th>Trajet</th>
+                <th>Montant</th>
+                <th>Commission 7%</th>
+                <th>Statut</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody>
-              {utilisateurs.map(u => (
+              {demandesAffichees.map(d => (
+                <tr key={d.id}>
+                  <td>{d.id}</td>
+                  <td>{d.chargeur_nom || '-'}</td>
+                  <td>{d.transporteur_nom || '-'}</td>
+                  <td>{d.marchandise}</td>
+                  <td>{d.ville_depart} → {d.ville_arrivee}</td>
+                  <td>{d.montant_final?.toLocaleString()} FCFA</td>
+                  <td style={{color:'#C55A11',fontWeight:'bold'}}>{d.commission_exdivia?.toLocaleString()} FCFA</td>
+                  <td>{d.contact_debloque ? 'Contact débloqué' : 'En attente paiement'}</td>
+                  <td>
+                    {!d.contact_debloque && (
+                      <button onClick={() => debloquerContact(d.id)} className="btn-debloquer">Débloquer contact</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* CARRE 2 - LISTE DES INSCRITS */}
+      <div className="admin-section">
+        <h2>Utilisateurs inscrits</h2>
+        <div className="admin-tabs">
+          <button
+            className={filtreUtilisateurs === 'chargeur' ? 'tab-actif' : 'tab'}
+            onClick={() => setFiltreUtilisateurs('chargeur')}
+          >
+            Chargeurs ({chargeurs.length})
+          </button>
+          <button
+            className={filtreUtilisateurs === 'transporteur' ? 'tab-actif' : 'tab'}
+            onClick={() => setFiltreUtilisateurs('transporteur')}
+          >
+            Transporteurs ({transporteurs.length})
+          </button>
+        </div>
+        <div className="admin-table-wrapper">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Note</th>
+                <th>Date inscription</th>
+              </tr>
+            </thead>
+            <tbody>
+              {utilisateursAffiches.map(u => (
                 <tr key={u.id}>
                   <td>{u.id}</td>
                   <td>{u.nom_complet}</td>
                   <td>{u.telephone}</td>
-                  <td style={{color: u.type_utilisateur === 'transporteur' ? '#1F4E79' : '#C55A11', fontWeight: 'bold'}}>{u.type_utilisateur}</td>
                   <td>{u.note_moyenne || '0'}/5</td>
                   <td>{new Date(u.created_at).toLocaleString('fr-FR')}</td>
-                  </tr>
+                </tr>
               ))}
-              </tbody>
-              </table>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* CARRE 3 - AUTRES HABILITATIONS ADMIN */}
+      <div className="admin-section">
+        <h2>Autres actions administrateur</h2>
+        <div className="admin-actions-grid">
+          <button className="admin-action-btn" onClick={chargerDonnees}>
+            Actualiser les données
+          </button>
+          <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
+            Exporter en Excel (bientôt)
+          </button>
+          <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
+            Gérer les litiges (bientôt)
+          </button>
+          <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
+            Statistiques mensuelles (bientôt)
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

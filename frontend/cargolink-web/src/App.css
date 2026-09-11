@@ -157,3 +157,61 @@ bts-transporteur {
   overflow-x: auto;
   max-width: 100%;
 }
+
+/* Nouvelle structure Admin */
+.admin-section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border: 2px solid #1F4E79;
+  background: white;
+  color: #1F4E79;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.tab-actif {
+  padding: 8px 16px;
+  border: 2px solid #1F4E79;
+  background: #1F4E79;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.admin-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.admin-action-btn {
+  padding: 15px;
+  background: #C55A11;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-action-btn:hover:not(:disabled) {
+  background: #a84a0d;
+}

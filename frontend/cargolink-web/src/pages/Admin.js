@@ -25,7 +25,8 @@ export default function Admin() {
       setConnecte(true);
       chargerDonnees();
     } catch (error) {
-      alert('Mot de passe incorrect');
+      const message = error.response?.data?.error || 'Mot de passe incorrect';
+      alert(message);
     }
   };
 

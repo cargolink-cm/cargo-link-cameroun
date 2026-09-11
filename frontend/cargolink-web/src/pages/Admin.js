@@ -6,20 +6,25 @@ const API = 'https://cargo-link-cameroun-production.up.railway.app/api';
 export default function Admin() {
   const [password, setPassword] = useState('');
   const [connecte, setConnecte] = useState(false);
+  const [adminToken, setAdminToken] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [demandes, setDemandes] = useState([]);
   const [totalCommission, setTotalCommission] = useState(0);
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [filtreDemandes, setFiltreDemandes] = useState('attente');
   const [filtreUtilisateurs, setFiltreUtilisateurs] = useState('chargeur');
+  const [afficherChangeMdp, setAfficherChangeMdp] = useState(false);
+  const [ancienMdp, setAncienMdp] = useState('');
+  const [nouveauMdp, setNouveauMdp] = useState('');
+  const [confirmMdp, setConfirmMdp] = useState('');
 
-  const ADMIN_PASSWORD = 'exdivia2026';
-
-  const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(API + '/admin-auth/login', { password });
+      setAdminToken(res.data.token);
       setConnecte(true);
       chargerDonnees();
-    } else {
+    } catch (error) {
       alert('Mot de passe incorrect');
     }
   };
@@ -54,6 +59,32 @@ export default function Admin() {
     }
   };
 
+  const handleChangerMotDePasse = async () => {
+    if (nouveauMdp !== confirmMdp) {
+      alert('Les nouveaux mots de passe ne correspondent pas');
+      return;
+    }
+    if (nouveauMdp.length < 8) {
+      alert('Le nouveau mot de passe doit contenir au moins 8 caracteres');
+      return;
+    }
+    try {
+      await axios.put(API + '/admin-auth/changer-mot-de-passe',
+        { ancienMotDePasse: ancienMdp, nouveauMotDePasse: nouveauMdp },
+        { headers: { Authorization: 'Bearer ' + adminToken } }
+      );
+      alert('Mot de passe modifie avec succes ! Reconnectez-vous.');
+      setConnecte(false);
+      setAfficherChangeMdp(false);
+      setAncienMdp('');
+      setNouveauMdp('');
+      setConfirmMdp('');
+      setPassword('');
+    } catch (error) {
+      alert(error.response?.data?.error || 'Erreur lors du changement de mot de passe');
+    }
+  };
+
   if (!connecte) {
     return (
       <div className="admin-login">
@@ -76,7 +107,6 @@ export default function Admin() {
     <div className="admin-dashboard">
       <h1>Dashboard Admin EXDIVIA SARL</h1>
 
-      {/* STATISTIQUES EN HAUT */}
       <div className="admin-stats">
         <div className="stat-card">
           <h3>Total Commissions</h3>
@@ -96,7 +126,6 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* CARRE 1 - GESTION DES DEMANDES */}
       <div className="admin-section">
         <h2>Gestion des demandes</h2>
         <div className="admin-tabs">
@@ -151,7 +180,6 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* CARRE 2 - LISTE DES INSCRITS */}
       <div className="admin-section">
         <h2>Utilisateurs inscrits</h2>
         <div className="admin-tabs">
@@ -194,12 +222,14 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* CARRE 3 - AUTRES HABILITATIONS ADMIN */}
       <div className="admin-section">
         <h2>Autres actions administrateur</h2>
         <div className="admin-actions-grid">
           <button className="admin-action-btn" onClick={chargerDonnees}>
             Actualiser les données
+          </button>
+          <button className="admin-action-btn" onClick={() => setAfficherChangeMdp(!afficherChangeMdp)}>
+            Changer le mot de passe admin
           </button>
           <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
             Exporter en Excel (bientôt)
@@ -207,10 +237,19 @@ export default function Admin() {
           <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
             Gérer les litiges (bientôt)
           </button>
-          <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
-            Statistiques mensuelles (bientôt)
-          </button>
         </div>
+
+        {afficherChangeMdp && (
+          <div style={{marginTop:'15px', padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px'}}>
+            <h3>Changer le mot de passe admin</h3>
+            <input type="password" placeholder="Ancien mot de passe" value={ancienMdp} onChange={e => setAncienMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+            <input type="password" placeholder="Nouveau mot de passe (8 caracteres min)" value={nouveauMdp} onChange={e => setNouveauMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+            <input type="password" placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChange={e => setConfirmMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+            <button onClick={handleChangerMotDePasse} style={{backgroundColor:'#1A5E38', color:'white', padding:'10px 20px', border:'none', borderRadius:'6px', cursor:'pointer'}}>
+              Confirmer le changement
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ const demandesRoutes = require('./routes/demandes');
 const messagesRoutes = require('./routes/messages');
 const adminRoutes = require('./routes/admin');
 const notationsRoutes = require('./routes/notations');
+const { router: adminAuthRoutes } = require('./routes/adminAuth');
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,7 @@ app.get('/test-messages', (req, res) => res.json({ ok: true }));
 app.use('/api/messages', messagesRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notations', notationsRoutes);
+app.use('/api/admin-auth', adminAuthRoutes);
 app.get('/', (req, res) => {
   res.json({ message: 'Cargolink API -EXDIVIA SARL' });
 });

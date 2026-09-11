@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 
+const MAX_TENTATIVES = 5;
+const DUREE_BLOCAGE_MINUTES = 15;
+
 router.post('/inscription', async (req, res) => {
     console.log('INSCRIPTION RECUE:', req.body);
     const { email, password, nom_complet, telephone, type_utilisateur } = req.body;
@@ -31,22 +34,60 @@ router.post('/inscription', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 router.post('/connexion', async (req, res) => {
     const { email, telephone, password } = req.body;
     const identifiant = email || telephone;
     console.log('Tentative connexion:', email, password);
+
     try {
+        const tentativeResult = await pool.query(
+            'SELECT * FROM tentatives_connexion WHERE type = $1 AND identifiant = $2',
+            ['utilisateur', identifiant]
+        );
+
+        if (tentativeResult.rows.length > 0) {
+            const tentative = tentativeResult.rows[0];
+
+            if (tentative.bloque_jusqu && new Date(tentative.bloque_jusqu) > new Date()) {
+                const minutesRestantes = Math.ceil((new Date(tentative.bloque_jusqu) - new Date()) / 60000);
+                return res.status(429).json({
+                    error: `Trop de tentatives. Reessayez dans ${minutesRestantes} minute(s).`
+                });
+            }
+
+            if (tentative.bloque_jusqu && new Date(tentative.bloque_jusqu) <= new Date()) {
+                await pool.query(
+                    'UPDATE tentatives_connexion SET tentatives = 0, bloque_jusqu = NULL WHERE id = $1',
+                    [tentative.id]
+                );
+            }
+        }
+
         const result = await pool.query(
             'SELECT * FROM users WHERE email = $1 OR telephone = $1', [identifiant]
         );
+
         if (result.rows.length === 0) {
+            await enregistrerTentativeEchouee(identifiant, tentativeResult);
             return res.status(401).json({ error: 'Utilisateur non trouve' });
         }
+
         const user = result.rows[0];
         const validPassword = await bcrypt.compare(password, user.password);
+
         if (!validPassword) {
-            return res.status(401).json({ error: 'Mot de passe incorrect' });
+            const messageErreur = await enregistrerTentativeEchouee(identifiant, tentativeResult);
+            return res.status(401).json({ error: messageErreur });
         }
+
+        if (tentativeResult.rows.length > 0) {
+            await pool.query(
+                'UPDATE tentatives_connexion SET tentatives = 0, bloque_jusqu = NULL WHERE id = $1',
+                [tentativeResult.rows[0].id]
+            );
+        }
+
         const token = jwt.sign(
             { id: user.id},
             process.env.JWT_SECRET,
@@ -57,5 +98,28 @@ router.post('/connexion', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+async function enregistrerTentativeEchouee(identifiant, tentativeResult) {
+    if (tentativeResult.rows.length > 0) {
+        const nouvelleTentative = tentativeResult.rows[0].tentatives + 1;
+        const bloque = nouvelleTentative >= MAX_TENTATIVES;
+
+        await pool.query(
+            'UPDATE tentatives_connexion SET tentatives = $1, derniere_tentative = NOW(), bloque_jusqu = $2 WHERE id = $3',
+            [nouvelleTentative, bloque ? new Date(Date.now() + DUREE_BLOCAGE_MINUTES * 60000) : null, tentativeResult.rows[0].id]
+        );
+
+        if (bloque) {
+            return `Trop de tentatives. Compte bloque pendant ${DUREE_BLOCAGE_MINUTES} minutes.`;
+        }
+        return `Mot de passe incorrect. ${MAX_TENTATIVES - nouvelleTentative} tentative(s) restante(s).`;
+    } else {
+        await pool.query(
+            'INSERT INTO tentatives_connexion (type, identifiant, tentatives) VALUES ($1, $2, 1)',
+            ['utilisateur', identifiant]
+        );
+        return `Mot de passe incorrect. ${MAX_TENTATIVES - 1} tentative(s) restante(s).`;
+    }
+}
 
 module.exports = router;

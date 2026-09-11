@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 
+const MAX_TENTATIVES = 5;
+const DUREE_BLOCAGE_MINUTES = 15;
+
 router.post('/login', async (req, res) => {
     const { password } = req.body;
 
@@ -12,6 +15,30 @@ router.post('/login', async (req, res) => {
     }
 
     try {
+        const identifiant = 'admin';
+        const tentativeResult = await pool.query(
+            'SELECT * FROM tentatives_connexion WHERE type = $1 AND identifiant = $2',
+            ['admin', identifiant]
+        );
+
+        if (tentativeResult.rows.length > 0) {
+            const tentative = tentativeResult.rows[0];
+
+            if (tentative.bloque_jusqu && new Date(tentative.bloque_jusqu) > new Date()) {
+                const minutesRestantes = Math.ceil((new Date(tentative.bloque_jusqu) - new Date()) / 60000);
+                return res.status(429).json({
+                    error: `Trop de tentatives. Reessayez dans ${minutesRestantes} minute(s).`
+                });
+            }
+
+            if (tentative.bloque_jusqu && new Date(tentative.bloque_jusqu) <= new Date()) {
+                await pool.query(
+                    'UPDATE tentatives_connexion SET tentatives = 0, bloque_jusqu = NULL WHERE id = $1',
+                    [tentative.id]
+                );
+            }
+        }
+
         const result = await pool.query(
             'SELECT * FROM admin_config ORDER BY id DESC LIMIT 1'
         );
@@ -24,7 +51,40 @@ router.post('/login', async (req, res) => {
         const valide = await bcrypt.compare(password, admin.mot_de_passe_hash);
 
         if (!valide) {
-            return res.status(401).json({ error: 'Mot de passe incorrect' });
+            if (tentativeResult.rows.length > 0) {
+                const nouvelleTentative = tentativeResult.rows[0].tentatives + 1;
+                const bloque = nouvelleTentative >= MAX_TENTATIVES;
+
+                await pool.query(
+                    'UPDATE tentatives_connexion SET tentatives = $1, derniere_tentative = NOW(), bloque_jusqu = $2 WHERE id = $3',
+                    [nouvelleTentative, bloque ? new Date(Date.now() + DUREE_BLOCAGE_MINUTES * 60000) : null, tentativeResult.rows[0].id]
+                );
+
+                if (bloque) {
+                    return res.status(429).json({
+                        error: `Trop de tentatives. Compte bloque pendant ${DUREE_BLOCAGE_MINUTES} minutes.`
+                    });
+                }
+
+                return res.status(401).json({
+                    error: `Mot de passe incorrect. ${MAX_TENTATIVES - nouvelleTentative} tentative(s) restante(s).`
+                });
+            } else {
+                await pool.query(
+                    'INSERT INTO tentatives_connexion (type, identifiant, tentatives) VALUES ($1, $2, 1)',
+                    ['admin', identifiant]
+                );
+                return res.status(401).json({
+                    error: `Mot de passe incorrect. ${MAX_TENTATIVES - 1} tentative(s) restante(s).`
+                });
+            }
+        }
+
+        if (tentativeResult.rows.length > 0) {
+            await pool.query(
+                'UPDATE tentatives_connexion SET tentatives = 0, bloque_jusqu = NULL WHERE id = $1',
+                [tentativeResult.rows[0].id]
+            );
         }
 
         const token = jwt.sign(

@@ -17,6 +17,9 @@ export const inscription = (data) => API.post('/auth/inscription', data);
 export const getDemandesDisponibles = () => API.get('/demandes/disponibles');
 export const creerDemande = (data) => API.post('/demandes', data);
 export const accepterDemande = (id, data) => API.put('/demandes/' + id + '/accepter', data);
+export const proposerOffre = (id, data) => API.post('/demandes/' + id + '/proposer', data);
+export const getPropositions = (id) => API.get('/demandes/' + id + '/propositions');
+export const choisirProposition = (id, propositionId) => API.put('/demandes/' + id + '/choisir-proposition', { proposition_id: propositionId });
 export const getMesDemandes = () => API.get('/demandes/mes-demandes');
 export const getMesDemandesTransporteur = () => API.get('/demandes/mes-demandes-transporteur');
 

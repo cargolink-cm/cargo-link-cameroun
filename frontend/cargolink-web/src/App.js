@@ -47,6 +47,9 @@ if (page === 'transporteur') {
               </div>
               </div>
               </main>
+              <footer style={{textAlign:'center', padding:'15px', color:'#888', fontSize:'13px'}}>
+                by EXDIVIA
+              </footer>
               </div>
   );
 }

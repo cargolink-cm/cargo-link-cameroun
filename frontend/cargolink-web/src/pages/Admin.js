@@ -29,6 +29,15 @@ export default function Admin() {
     }
   };
 
+  React.useEffect(() => {
+    if (!connecte) return;
+    const interval = setInterval(() => {
+      chargerDonnees();
+    }, 30000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connecte]);
+
   const chargerDonnees = async () => {
     try {
       const token = localStorage.getItem('cargolink_token');

@@ -20,7 +20,7 @@ function Connexion({ onConnexion }) {
         }
     };
 
-    const lienWhatsApp = 'https://wa.me/237680893650?text=' + encodeURIComponent('Bonjour, j\'ai oublie mon mot de passe CargoLink. Mon numero enregistre est : ');
+    const lienWhatsApp = 'https://wa.me/237680893650?text=' + encodeURIComponent('Bonjour, j\'ai oublie mon mot de passe CargoLink. Mon numero enregistre sur l\'application est : [ECRIVEZ VOTRE NUMERO ICI]');
 
     return (
         <div className="page-connexion">

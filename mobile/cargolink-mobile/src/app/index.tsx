@@ -16,6 +16,7 @@ export default function Index() {
       <TouchableOpacity style={styles.btnConnexion} onPress={() => router.push('/connexion')}>
         <Text style={styles.btnTexte}>Deja inscrit ? Se connecter</Text>
       </TouchableOpacity>
+      <Text style={styles.footer}>by EXDIVIA</Text>
     </View>
   );
 }
@@ -29,4 +30,5 @@ const styles = StyleSheet.create({
   btnConnexion: { backgroundColor: 'transparent', padding: 15, borderRadius: 10, width: '100%', alignItems: 'center', borderWidth: 1, borderColor: '#D6E4F0' },
   btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
   btnTexteBleu: { color: '#1F4E79', fontSize: 16, fontWeight: 'bold' },
+  footer: { color: '#D6E4F0', fontSize: 12, marginTop: 30, opacity: 0.7 },
 });

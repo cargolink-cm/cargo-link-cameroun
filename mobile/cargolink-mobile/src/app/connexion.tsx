@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,12 @@ const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 export default function Connexion() {
   const [identifiant, setIdentifiant] = useState('');
   const [password, setPassword] = useState('');
+
+  const ouvrirWhatsApp = () => {
+    const message = "Bonjour, j'ai oublie mon mot de passe CargoLink. Mon numero enregistre sur l'application est : [ECRIVEZ VOTRE NUMERO ICI]";
+    const url = 'https://wa.me/237680893650?text=' + encodeURIComponent(message);
+    Linking.openURL(url);
+  };
 
   const handleConnexion = async () => {
     try {
@@ -26,7 +32,8 @@ export default function Connexion() {
         router.replace('/dashboard');
       }
     } catch (err: any) {
-      Alert.alert('Erreur', 'Identifiants incorrects');
+      const message = err.response?.data?.error || 'Identifiants incorrects';
+      Alert.alert('Erreur', message);
     }
   };
 
@@ -41,6 +48,9 @@ export default function Connexion() {
       <TouchableOpacity onPress={() => router.push('/inscription')}>
         <Text style={styles.lien}>Pas encore inscrit ? S inscrire</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={ouvrirWhatsApp}>
+        <Text style={styles.lienMdpOublie}>Mot de passe oublie ?</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -52,4 +62,5 @@ const styles = StyleSheet.create({
   btn: { backgroundColor: '#1F4E79', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
   btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
   lien: { color: '#1F4E79', textAlign: 'center', marginTop: 10 },
+  lienMdpOublie: { color: '#888', textAlign: 'center', marginTop: 15, fontSize: 13 },
 });

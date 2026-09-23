@@ -15,9 +15,12 @@ function Connexion({ onConnexion }) {
             localStorage.setItem('cargolink_user', JSON.stringify(res.data.user));
             onConnexion(res.data.user);
         } catch (err) {
-            setErreur('Email ou mot de passe incorrect');
+            const message = err.response?.data?.error || 'Email ou mot de passe incorrect';
+            setErreur(message);
         }
     };
+
+    const lienWhatsApp = 'https://wa.me/237680893650?text=' + encodeURIComponent('Bonjour, j\'ai oublie mon mot de passe CargoLink. Mon numero enregistre est : ');
 
     return (
         <div className="page-connexion">
@@ -27,6 +30,9 @@ function Connexion({ onConnexion }) {
             <input placeholder="Ou votre numero de telephone" value={telephone} onChange={e => setTelephone(e.target.value)} />
             <input type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} />
             <button onClick={handleSubmit}>Se connecter</button>
+            <a href={lienWhatsApp} target="_blank" rel="noopener noreferrer" style={{display:'block', textAlign:'center', marginTop:'15px', color:'#1F4E79', fontSize:'14px'}}>
+                Mot de passe oublie ?
+            </a>
             </div>
     );
 }

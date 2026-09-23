@@ -154,4 +154,60 @@ router.put('/changer-mot-de-passe', authAdmin, async (req, res) => {
     }
 });
 
+router.put('/reinitialiser-mot-de-passe', authAdmin, async (req, res) => {
+    const { identifiant, nouveauMotDePasse } = req.body;
+
+    if (!identifiant || !nouveauMotDePasse) {
+        return res.status(400).json({ error: 'Identifiant et nouveau mot de passe requis' });
+    }
+
+    if (nouveauMotDePasse.length < 6) {
+        return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 6 caracteres' });
+    }
+
+    try {
+        const userResult = await pool.query(
+            'SELECT id, nom_complet, telephone, email FROM users WHERE email = $1 OR telephone = $1',
+            [identifiant]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Utilisateur introuvable avec cet identifiant' });
+        }
+
+        const user = userResult.rows[0];
+        const nouveauHash = await bcrypt.hash(nouveauMotDePasse, 10);
+
+        await pool.query(
+            'UPDATE users SET password = $1 WHERE id = $2',
+            [nouveauHash, user.id]
+        );
+
+        res.json({
+            message: 'Mot de passe reinitialise avec succes',
+            user: { nom_complet: user.nom_complet, telephone: user.telephone, email: user.email }
+        });
+    } catch (error) {
+        console.log('Erreur reinitialisation mot de passe:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/rechercher-utilisateur/:identifiant', authAdmin, async (req, res) => {
+    try {
+        const userResult = await pool.query(
+            'SELECT id, nom_complet, telephone, email, type_utilisateur FROM users WHERE email = $1 OR telephone = $1',
+            [req.params.identifiant]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Utilisateur introuvable' });
+        }
+
+        res.json(userResult.rows[0]);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = { router, authAdmin };

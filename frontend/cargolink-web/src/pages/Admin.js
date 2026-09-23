@@ -17,6 +17,10 @@ export default function Admin() {
   const [ancienMdp, setAncienMdp] = useState('');
   const [nouveauMdp, setNouveauMdp] = useState('');
   const [confirmMdp, setConfirmMdp] = useState('');
+  const [afficherReset, setAfficherReset] = useState(false);
+  const [identifiantRecherche, setIdentifiantRecherche] = useState('');
+  const [utilisateurTrouve, setUtilisateurTrouve] = useState(null);
+  const [nouveauMdpUtilisateur, setNouveauMdpUtilisateur] = useState('');
 
   const handleLogin = async () => {
     try {
@@ -66,6 +70,41 @@ export default function Admin() {
       chargerDonnees();
     } catch (error) {
       alert('Erreur lors du déblocage');
+    }
+  };
+
+  const handleRechercherUtilisateur = async () => {
+    if (!identifiantRecherche) {
+      alert('Entrez un email ou un telephone');
+      return;
+    }
+    try {
+      const res = await axios.get(API + '/admin-auth/rechercher-utilisateur/' + identifiantRecherche, {
+        headers: { Authorization: 'Bearer ' + adminToken }
+      });
+      setUtilisateurTrouve(res.data);
+    } catch (error) {
+      alert('Utilisateur introuvable');
+      setUtilisateurTrouve(null);
+    }
+  };
+
+  const handleReinitialiserMotDePasse = async () => {
+    if (!nouveauMdpUtilisateur || nouveauMdpUtilisateur.length < 6) {
+      alert('Le nouveau mot de passe doit contenir au moins 6 caracteres');
+      return;
+    }
+    try {
+      await axios.put(API + '/admin-auth/reinitialiser-mot-de-passe',
+        { identifiant: identifiantRecherche, nouveauMotDePasse: nouveauMdpUtilisateur },
+        { headers: { Authorization: 'Bearer ' + adminToken } }
+      );
+      alert('Mot de passe reinitialise avec succes pour ' + utilisateurTrouve.nom_complet + '. Communiquez-lui le nouveau mot de passe.');
+      setNouveauMdpUtilisateur('');
+      setIdentifiantRecherche('');
+      setUtilisateurTrouve(null);
+    } catch (error) {
+      alert(error.response?.data?.error || 'Erreur lors de la reinitialisation');
     }
   };
 
@@ -241,6 +280,9 @@ export default function Admin() {
           <button className="admin-action-btn" onClick={() => setAfficherChangeMdp(!afficherChangeMdp)}>
             Changer le mot de passe admin
           </button>
+          <button className="admin-action-btn" onClick={() => setAfficherReset(!afficherReset)}>
+            Reinitialiser mot de passe utilisateur
+          </button>
           <button className="admin-action-btn" disabled style={{opacity: 0.5}}>
             Exporter en Excel (bientôt)
           </button>
@@ -248,6 +290,40 @@ export default function Admin() {
             Gérer les litiges (bientôt)
           </button>
         </div>
+
+        {afficherReset && (
+          <div style={{marginTop:'15px', padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px'}}>
+            <h3>Reinitialiser le mot de passe d'un utilisateur</h3>
+            <input
+              placeholder="Email ou telephone de l'utilisateur"
+              value={identifiantRecherche}
+              onChange={e => setIdentifiantRecherche(e.target.value)}
+              style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}}
+            />
+            <button onClick={handleRechercherUtilisateur} style={{backgroundColor:'#1F4E79', color:'white', padding:'8px 16px', border:'none', borderRadius:'6px', cursor:'pointer', marginBottom:'10px'}}>
+              Rechercher
+            </button>
+
+            {utilisateurTrouve && (
+              <div style={{backgroundColor:'#E8F5EE', padding:'10px', borderRadius:'6px', marginTop:'10px'}}>
+                <p><strong>Utilisateur trouve :</strong></p>
+                <p>Nom : {utilisateurTrouve.nom_complet}</p>
+                <p>Telephone : {utilisateurTrouve.telephone}</p>
+                <p>Type : {utilisateurTrouve.type_utilisateur}</p>
+                <input
+                  type="text"
+                  placeholder="Nouveau mot de passe (6 caracteres min)"
+                  value={nouveauMdpUtilisateur}
+                  onChange={e => setNouveauMdpUtilisateur(e.target.value)}
+                  style={{display:'block', width:'100%', marginTop:'10px', marginBottom:'10px', padding:'8px'}}
+                />
+                <button onClick={handleReinitialiserMotDePasse} style={{backgroundColor:'#1A5E38', color:'white', padding:'10px 20px', border:'none', borderRadius:'6px', cursor:'pointer'}}>
+                  Confirmer la reinitialisation
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {afficherChangeMdp && (
           <div style={{marginTop:'15px', padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px'}}>

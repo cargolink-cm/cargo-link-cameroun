@@ -20,15 +20,22 @@ export default function MesDemandesTransporteur() {
   const [demandes, setDemandes] = useState<Demande[]>([]);
 
   useEffect(() => {
-    charger();
-    const interval = setInterval(charger, 30000);
-    return () => clearInterval(interval);
+    let actif = true;
+    charger(actif);
+    const interval = setInterval(() => charger(actif), 30000);
+    return () => {
+      actif = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  const charger = async () => {
+  const charger = async (actif: boolean = true) => {
     try {
       const token = await AsyncStorage.getItem('cargolink_token');
-      if (!token) { router.replace('/connexion'); return; }
+      if (!token) {
+        if (actif) router.replace('/connexion');
+        return;
+      }
       const res = await axios.get(API_URL + '/demandes/mes-demandes-transporteur', {
         headers: { Authorization: 'Bearer ' + token }
       });

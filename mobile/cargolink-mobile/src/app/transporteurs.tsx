@@ -22,16 +22,23 @@ export default function Transporteurs() {
   const [envoiEnCours, setEnvoiEnCours] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
-    charger();
-    const interval = setInterval(charger, 30000);
-    return () => clearInterval(interval);
+    let actif = true;
+    charger(actif);
+    const interval = setInterval(() => charger(actif), 30000);
+    return () => {
+      actif = false;
+      clearInterval(interval);
+    };
   }, []);
 
-  const charger = async () => {
+  const charger = async (actif: boolean = true) => {
     try {
       const token = await AsyncStorage.getItem('cargolink_token');
       const userData = await AsyncStorage.getItem('cargolink_user');
-      if (!token) { router.replace('/connexion'); return; }
+      if (!token) {
+        if (actif) router.replace('/connexion');
+        return;
+      }
       if (userData) setUser(JSON.parse(userData));
       const [res1, res2] = await Promise.all([
         axios.get(API_URL + '/demandes/disponibles', { headers: { Authorization: 'Bearer ' + token } }),

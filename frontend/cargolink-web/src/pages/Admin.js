@@ -257,15 +257,22 @@ export default function Admin() {
               </tr>
             </thead>
             <tbody>
-              {utilisateursAffiches.map(u => (
-                <tr key={u.id}>
-                  <td>{u.id}</td>
-                  <td>{u.nom_complet}</td>
-                  <td>{u.telephone}</td>
-                  <td>{u.note_moyenne || '0'}/5</td>
-                  <td>{new Date(u.created_at).toLocaleString('fr-FR')}</td>
-                </tr>
-              ))}
+              {utilisateursAffiches.map(u => {
+                const minutesDepuisActivite = u.derniere_activite ? (Date.now() - new Date(u.derniere_activite).getTime()) / 60000 : 9999;
+                const enLigne = minutesDepuisActivite <= 10;
+                return (
+                  <tr key={u.id}>
+                    <td>{u.id}</td>
+                    <td>
+                      <span style={{display:'inline-block', width:'10px', height:'10px', borderRadius:'50%', backgroundColor: enLigne ? '#2ECC71' : '#F39C12', marginRight:'8px'}}></span>
+                      {u.nom_complet}
+                    </td>
+                    <td>{u.telephone}</td>
+                    <td>{u.note_moyenne || '0'}/5</td>
+                    <td>{new Date(u.created_at).toLocaleString('fr-FR')}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -193,6 +193,33 @@ router.put('/:id/accepter', auth, async (req, res) => {
     }
 });
 
+router.get('/notifications-propositions', auth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT COUNT(DISTINCT p.demande_id) as total
+             FROM propositions p
+             JOIN demandes_transport d ON p.demande_id = d.id
+             WHERE d.chargeur_id = $1 AND p.vue_par_chargeur = FALSE`,
+            [req.user.id]
+        );
+        res.json({ total: parseInt(result.rows[0].total) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.put('/:id/marquer-vue', auth, async (req, res) => {
+    try {
+        await pool.query(
+            'UPDATE propositions SET vue_par_chargeur = TRUE WHERE demande_id = $1',
+            [req.params.id]
+        );
+        res.json({ message: 'Marque comme vue' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get('/mes-demandes', auth, async (req, res) => {
     try {
         const result = await pool.query(

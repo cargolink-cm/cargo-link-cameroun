@@ -18,6 +18,26 @@ router.post('/inscription', async (req, res) => {
         return res.status(400).json({ error: 'Mot de passe requis' });
     }
     try {
+        if (telephone) {
+            const telephoneExistant = await pool.query(
+                'SELECT id FROM users WHERE telephone = $1',
+                [telephone]
+            );
+            if (telephoneExistant.rows.length > 0) {
+                return res.status(400).json({ error: 'Ce numero de telephone est deja utilise par un autre compte' });
+            }
+        }
+
+        if (email) {
+            const emailExistant = await pool.query(
+                'SELECT id FROM users WHERE email = $1',
+                [email]
+            );
+            if (emailExistant.rows.length > 0) {
+                return res.status(400).json({ error: 'Cet email est deja utilise par un autre compte' });
+            }
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const result = await pool.query(
             'INSERT INTO users (email,password,nom_complet,telephone,type_utilisateur) VALUES ($1,$2,$3,$4,$5) RETURNING id,email,nom_complet,telephone,type_utilisateur',

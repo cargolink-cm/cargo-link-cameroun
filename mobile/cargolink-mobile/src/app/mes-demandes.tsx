@@ -93,6 +93,10 @@ export default function MesDemandes() {
       });
       setPropositions({ ...propositions, [demandeId]: res.data });
       setDemandeOuverte(demandeId);
+
+      await axios.put(API_URL + '/demandes/' + demandeId + '/marquer-vue', {}, {
+        headers: { Authorization: 'Bearer ' + token }
+      });
     } catch (error) {
       Alert.alert('Erreur', 'Impossible de charger les propositions');
     }

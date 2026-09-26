@@ -76,6 +76,7 @@ export default function Dashboard() {
   const [typeCamion, setTypeCamion] = useState('Tout type de camion');
   const [poids, setPoids] = useState('');
   const [budget, setBudget] = useState('');
+  const [notifPropositions, setNotifPropositions] = useState(0);
   const [modalDepart, setModalDepart] = useState(false);
   const [modalArrivee, setModalArrivee] = useState(false);
   const [modalCamion, setModalCamion] = useState(false);
@@ -96,6 +97,11 @@ export default function Dashboard() {
         headers: { Authorization: 'Bearer ' + token }
       });
       setDemandes(res.data);
+
+      const resNotif = await axios.get(API_URL + '/demandes/notifications-propositions', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      setNotifPropositions(resNotif.data.total);
     } catch (error) {
       console.log('Erreur:', error);
     }
@@ -172,6 +178,11 @@ export default function Dashboard() {
       </TouchableOpacity>
       <TouchableOpacity style={styles.btnSecondaire} onPress={() => router.push('/mes-demandes')}>
         <Text style={styles.btnTexte}>Mes demandes</Text>
+        {notifPropositions > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeTexte}>{notifPropositions}</Text>
+          </View>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.sectionTitre}>Demandes disponibles ({demandes.length})</Text>
@@ -198,7 +209,9 @@ const styles = StyleSheet.create({
   selectorText: { fontSize: 16, color: '#333', flex: 1 },
   arrow: { fontSize: 12, color: '#888' },
   btn: { backgroundColor: '#C55A11', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
-  btnSecondaire: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
+  btnSecondaire: { backgroundColor: '#1F4E79', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 15, flexDirection: 'row', justifyContent: 'center' },
+  badge: { backgroundColor: '#C55A11', borderRadius: 10, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', marginLeft: 8, paddingHorizontal: 5 },
+  badgeTexte: { color: 'white', fontSize: 12, fontWeight: 'bold' },
   btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
   card: { backgroundColor: 'white', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#1F4E79' },
   cardTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginBottom: 5 },

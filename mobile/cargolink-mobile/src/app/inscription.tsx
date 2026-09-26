@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +13,7 @@ export default function Inscription() {
   const [email, setEmail] = useState('');
   const [telephone, setTelephone] = useState('');
   const [password, setPassword] = useState('');
+  const [afficherMdp, setAfficherMdp] = useState(false);
   const [typeUtilisateur, setTypeUtilisateur] = useState(type || 'chargeur');
 
   useEffect(() => {
@@ -46,7 +48,12 @@ export default function Inscription() {
       <TextInput style={styles.input} placeholder="Nom complet" value={nomComplet} onChangeText={setNomComplet} />
       <TextInput style={styles.input} placeholder="Email (optionnel)" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
       <TextInput style={styles.input} placeholder="Telephone" value={telephone} onChangeText={setTelephone} keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />
+      <View style={styles.inputMdpContainer}>
+        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} />
+        <TouchableOpacity onPress={() => setAfficherMdp(!afficherMdp)} style={styles.iconeOeil}>
+          <Ionicons name={afficherMdp ? 'eye-off' : 'eye'} size={22} color="#888" />
+        </TouchableOpacity>
+      </View>
       <Text style={styles.label}>Type de compte :</Text>
       <View style={styles.typeContainer}>
         <TouchableOpacity style={[styles.typeBtn, typeUtilisateur === 'chargeur' && styles.typeBtnActif]} onPress={() => setTypeUtilisateur('chargeur')}>
@@ -71,6 +78,9 @@ const styles = StyleSheet.create({
   titre: { fontSize: 28, fontWeight: 'bold', color: '#1F4E79', marginBottom: 30, textAlign: 'center' },
   label: { fontSize: 16, color: '#1F4E79', fontWeight: 'bold', marginBottom: 10 },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 15, fontSize: 16 },
+  inputMdpContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, marginBottom: 15 },
+  inputMdp: { flex: 1, padding: 12, fontSize: 16 },
+  iconeOeil: { padding: 12 },
   typeContainer: { flexDirection: 'row', gap: 10, marginBottom: 20 },
   typeBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 2, borderColor: '#1F4E79', alignItems: 'center', backgroundColor: '#D6E4F0' },
   typeBtnActif: { backgroundColor: '#1F4E79' },

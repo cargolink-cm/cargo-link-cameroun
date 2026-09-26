@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Linking } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +10,7 @@ const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 export default function Connexion() {
   const [identifiant, setIdentifiant] = useState('');
   const [password, setPassword] = useState('');
+  const [afficherMdp, setAfficherMdp] = useState(false);
 
   const ouvrirWhatsApp = () => {
     const message = "Bonjour, j'ai oublie mon mot de passe CargoLink. Mon numero enregistre sur l'application est : [ECRIVEZ VOTRE NUMERO ICI]";
@@ -41,7 +43,12 @@ export default function Connexion() {
     <View style={styles.container}>
       <Text style={styles.titre}>Connexion CargoLink</Text>
       <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} onChangeText={setIdentifiant} autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />
+      <View style={styles.inputMdpContainer}>
+        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} />
+        <TouchableOpacity onPress={() => setAfficherMdp(!afficherMdp)} style={styles.iconeOeil}>
+          <Ionicons name={afficherMdp ? 'eye-off' : 'eye'} size={22} color="#888" />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.btn} onPress={handleConnexion}>
         <Text style={styles.btnTexte}>Se connecter</Text>
       </TouchableOpacity>
@@ -59,6 +66,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'white', padding: 30, justifyContent: 'center' },
   titre: { fontSize: 28, fontWeight: 'bold', color: '#1F4E79', marginBottom: 30, textAlign: 'center' },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 15, fontSize: 16 },
+  inputMdpContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, marginBottom: 15 },
+  inputMdp: { flex: 1, padding: 12, fontSize: 16 },
+  iconeOeil: { padding: 12 },
   btn: { backgroundColor: '#1F4E79', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 15 },
   btnTexte: { color: 'white', fontSize: 16, fontWeight: 'bold' },
   lien: { color: '#1F4E79', textAlign: 'center', marginTop: 10 },

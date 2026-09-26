@@ -77,6 +77,10 @@ export default function Dashboard() {
   const [poids, setPoids] = useState('');
   const [budget, setBudget] = useState('');
   const [notifPropositions, setNotifPropositions] = useState(0);
+  const [afficherChangeMdp, setAfficherChangeMdp] = useState(false);
+  const [ancienMdp, setAncienMdp] = useState('');
+  const [nouveauMdp, setNouveauMdp] = useState('');
+  const [confirmMdp, setConfirmMdp] = useState('');
   const [modalDepart, setModalDepart] = useState(false);
   const [modalArrivee, setModalArrivee] = useState(false);
   const [modalCamion, setModalCamion] = useState(false);
@@ -111,6 +115,31 @@ export default function Dashboard() {
       setNotifPropositions(resNotif.data.total);
     } catch (error) {
       console.log('Erreur:', error);
+    }
+  };
+
+  const changerMotDePasse = async () => {
+    if (nouveauMdp !== confirmMdp) {
+      Alert.alert('Erreur', 'Les nouveaux mots de passe ne correspondent pas');
+      return;
+    }
+    if (nouveauMdp.length < 6) {
+      Alert.alert('Erreur', 'Le nouveau mot de passe doit contenir au moins 6 caracteres');
+      return;
+    }
+    try {
+      const token = await AsyncStorage.getItem('cargolink_token');
+      await axios.put(API_URL.replace('/demandes','') + '/auth/changer-mot-de-passe',
+        { ancienMotDePasse: ancienMdp, nouveauMotDePasse: nouveauMdp },
+        { headers: { Authorization: 'Bearer ' + token } }
+      );
+      Alert.alert('Succes', 'Mot de passe modifie avec succes !');
+      setAfficherChangeMdp(false);
+      setAncienMdp('');
+      setNouveauMdp('');
+      setConfirmMdp('');
+    } catch (error: any) {
+      Alert.alert('Erreur', error.response?.data?.error || 'Impossible de changer le mot de passe');
     }
   };
 
@@ -155,6 +184,21 @@ export default function Dashboard() {
           <Text style={styles.deconnexion}>Deconnecter</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.btnChangerMdp} onPress={() => setAfficherChangeMdp(!afficherChangeMdp)}>
+        <Text style={styles.btnChangerMdpTexte}>Changer mon mot de passe</Text>
+      </TouchableOpacity>
+
+      {afficherChangeMdp && (
+        <View style={styles.blocChangeMdp}>
+          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry />
+          <TouchableOpacity style={styles.btnConfirmerMdp} onPress={changerMotDePasse}>
+            <Text style={styles.btnTexte}>Confirmer</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <Text style={styles.sectionTitre}>Nouvelle demande</Text>
       <TextInput style={styles.input} placeholder="Marchandise *" value={marchandise} onChangeText={setMarchandise} />
@@ -210,6 +254,10 @@ const styles = StyleSheet.create({
   titre: { fontSize: 18, fontWeight: 'bold', color: '#1F4E79' },
   sectionTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginTop: 15, marginBottom: 10 },
   deconnexion: { color: 'red', fontSize: 14 },
+  btnChangerMdp: { backgroundColor: '#1F4E79', padding: 10, borderRadius: 6, alignItems: 'center', marginBottom: 10 },
+  btnChangerMdpTexte: { color: 'white', fontSize: 13, fontWeight: 'bold' },
+  blocChangeMdp: { backgroundColor: '#f5f5f5', padding: 15, borderRadius: 8, marginBottom: 15 },
+  btnConfirmerMdp: { backgroundColor: '#1A5E38', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
   label: { fontSize: 14, color: '#555', marginBottom: 5, marginTop: 5 },
   input: { backgroundColor: 'white', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 10, fontSize: 16 },
   selector: { backgroundColor: 'white', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

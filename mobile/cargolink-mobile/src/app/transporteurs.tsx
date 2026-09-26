@@ -20,6 +20,10 @@ export default function Transporteurs() {
   const [immatriculations, setImmatriculations] = useState<{ [key: number]: string }>({});
   const [cartesGrises, setCartesGrises] = useState<{ [key: number]: string }>({});
   const [envoiEnCours, setEnvoiEnCours] = useState<{ [key: number]: boolean }>({});
+  const [afficherChangeMdp, setAfficherChangeMdp] = useState(false);
+  const [ancienMdp, setAncienMdp] = useState('');
+  const [nouveauMdp, setNouveauMdp] = useState('');
+  const [confirmMdp, setConfirmMdp] = useState('');
 
   useEffect(() => {
     let actif = true;
@@ -48,6 +52,31 @@ export default function Transporteurs() {
       setMesDemandesAcceptees(res2.data);
     } catch (err) {
       console.log('Erreur charger transporteur:', err);
+    }
+  };
+
+  const changerMotDePasse = async () => {
+    if (nouveauMdp !== confirmMdp) {
+      Alert.alert('Erreur', 'Les nouveaux mots de passe ne correspondent pas');
+      return;
+    }
+    if (nouveauMdp.length < 6) {
+      Alert.alert('Erreur', 'Le nouveau mot de passe doit contenir au moins 6 caracteres');
+      return;
+    }
+    try {
+      const token = await AsyncStorage.getItem('cargolink_token');
+      await axios.put(API_URL.replace('/demandes','') + '/auth/changer-mot-de-passe',
+        { ancienMotDePasse: ancienMdp, nouveauMotDePasse: nouveauMdp },
+        { headers: { Authorization: 'Bearer ' + token } }
+      );
+      Alert.alert('Succes', 'Mot de passe modifie avec succes !');
+      setAfficherChangeMdp(false);
+      setAncienMdp('');
+      setNouveauMdp('');
+      setConfirmMdp('');
+    } catch (error: any) {
+      Alert.alert('Erreur', error.response?.data?.error || 'Impossible de changer le mot de passe');
     }
   };
 
@@ -147,6 +176,22 @@ export default function Transporteurs() {
           <Text style={styles.deconnexion}>Deconnecter</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.btnChangerMdp} onPress={() => setAfficherChangeMdp(!afficherChangeMdp)}>
+        <Text style={styles.btnChangerMdpTexte}>Changer mon mot de passe</Text>
+      </TouchableOpacity>
+
+      {afficherChangeMdp && (
+        <View style={styles.blocChangeMdp}>
+          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry />
+          <TouchableOpacity style={styles.btnConfirmerMdp} onPress={changerMotDePasse}>
+            <Text style={styles.btnTexte}>Confirmer</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <Text style={styles.noteMoyenne}>Note moyenne: {user?.note_moyenne ? user.note_moyenne + '/5' : 'Pas encore note'}</Text>
       <TouchableOpacity style={styles.btnSecondaire} onPress={() => router.push('/mes-demandes-transporteur')}>
         <Text style={styles.btnTexte}>Mes demandes acceptees</Text>
@@ -214,6 +259,10 @@ const styles = StyleSheet.create({
   noteMoyenne: { fontSize: 14, color: '#555', marginBottom: 15 },
   sousTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginTop: 10, marginBottom: 10 },
   deconnexion: { color: 'red', fontSize: 14 },
+  btnChangerMdp: { backgroundColor: '#1F4E79', padding: 10, borderRadius: 6, alignItems: 'center', marginBottom: 10 },
+  btnChangerMdpTexte: { color: 'white', fontSize: 13, fontWeight: 'bold' },
+  blocChangeMdp: { backgroundColor: '#f5f5f5', padding: 15, borderRadius: 8, marginBottom: 15 },
+  btnConfirmerMdp: { backgroundColor: '#1A5E38', padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 5 },
   card: { backgroundColor: 'white', padding: 15, borderRadius: 8, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#1F4E79' },
   cardTitre: { fontSize: 16, fontWeight: 'bold', color: '#1F4E79', marginBottom: 5 },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 10, marginTop: 8, fontSize: 16 },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getDemandesDisponibles, proposerOffre, getMesDemandesTransporteur } from '../services/api';
+import { getDemandesDisponibles, proposerOffre, getMesDemandesTransporteur, changerMotDePasse } from '../services/api';
 
 function Transporteur({ user }) {
     const [demandes, setDemandes] = useState([]);
@@ -9,6 +9,10 @@ function Transporteur({ user }) {
     const [immatriculations, setImmatriculations] = useState({});
     const [cartesGrises, setCartesGrises] = useState({});
     const [envoiEnCours, setEnvoiEnCours] = useState({});
+    const [afficherChangeMdp, setAfficherChangeMdp] = useState(false);
+    const [ancienMdp, setAncienMdp] = useState('');
+    const [nouveauMdp, setNouveauMdp] = useState('');
+    const [confirmMdp, setConfirmMdp] = useState('');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
@@ -21,6 +25,27 @@ function Transporteur({ user }) {
         return () => clearInterval(interval);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const handleChangerMotDePasse = async () => {
+        if (nouveauMdp !== confirmMdp) {
+            alert('Les nouveaux mots de passe ne correspondent pas');
+            return;
+        }
+        if (nouveauMdp.length < 6) {
+            alert('Le nouveau mot de passe doit contenir au moins 6 caracteres');
+            return;
+        }
+        try {
+            await changerMotDePasse({ ancienMotDePasse: ancienMdp, nouveauMotDePasse: nouveauMdp });
+            alert('Mot de passe modifie avec succes !');
+            setAfficherChangeMdp(false);
+            setAncienMdp('');
+            setNouveauMdp('');
+            setConfirmMdp('');
+        } catch (error) {
+            alert(error.response?.data?.error || 'Erreur lors du changement de mot de passe');
+        }
+    };
 
     const handleCarteGrise = (id, file) => {
         if (!file) return;
@@ -75,7 +100,23 @@ function Transporteur({ user }) {
                 <h2>Bonjour {user?.nom_complet}</h2>
                 <p>Note moyenne : {noteMoyenne > 0 ? noteMoyenne + '/5' : 'Pas encore noté'}</p>
                 <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
+                <button onClick={() => setAfficherChangeMdp(!afficherChangeMdp)} style={{marginLeft:'10px', backgroundColor:'#1F4E79', color:'white', border:'none', padding:'8px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px'}}>
+                    Changer mon mot de passe
+                </button>
             </div>
+
+            {afficherChangeMdp && (
+                <div style={{padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px', marginBottom:'20px'}}>
+                    <h3>Changer mon mot de passe</h3>
+                    <input type="password" placeholder="Ancien mot de passe" value={ancienMdp} onChange={e => setAncienMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <input type="password" placeholder="Nouveau mot de passe (6 caracteres min)" value={nouveauMdp} onChange={e => setNouveauMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <input type="password" placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChange={e => setConfirmMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <button onClick={handleChangerMotDePasse} style={{backgroundColor:'#1A5E38', color:'white', padding:'10px 20px', border:'none', borderRadius:'6px', cursor:'pointer'}}>
+                        Confirmer
+                    </button>
+                </div>
+            )}
+
             <h3>Mes demandes acceptées</h3>
             {mesDemandesAcceptees.map(d => (
                 <div key={d.id} className="demande-card">

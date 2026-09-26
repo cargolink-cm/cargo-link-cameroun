@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import VILLES from '../data/villes';
 import Notations from './Notations';
-import { getDemandesDisponibles, creerDemande, getMesDemandes, getPropositions, choisirProposition } from '../services/api';
+import { getDemandesDisponibles, creerDemande, getMesDemandes, getPropositions, choisirProposition, changerMotDePasse } from '../services/api';
 import TYPES_CAMIONS from '../data/camions';
 
 function Dashboard({ user }) {
@@ -17,6 +17,10 @@ function Dashboard({ user }) {
     const [propositions, setPropositions] = useState({});
     const [demandeOuverte, setDemandeOuverte] = useState(null);
     const [carteGriseAffichee, setCarteGriseAffichee] = useState(null);
+    const [afficherChangeMdp, setAfficherChangeMdp] = useState(false);
+    const [ancienMdp, setAncienMdp] = useState('');
+    const [nouveauMdp, setNouveauMdp] = useState('');
+    const [confirmMdp, setConfirmMdp] = useState('');
 
     useEffect(() => {
         getDemandesDisponibles().then(res => setDemandes(res.data));
@@ -27,6 +31,27 @@ function Dashboard({ user }) {
         }, 30000);
         return () => clearInterval(interval);
     }, []);
+
+    const handleChangerMotDePasse = async () => {
+        if (nouveauMdp !== confirmMdp) {
+            alert('Les nouveaux mots de passe ne correspondent pas');
+            return;
+        }
+        if (nouveauMdp.length < 6) {
+            alert('Le nouveau mot de passe doit contenir au moins 6 caracteres');
+            return;
+        }
+        try {
+            await changerMotDePasse({ ancienMotDePasse: ancienMdp, nouveauMotDePasse: nouveauMdp });
+            alert('Mot de passe modifie avec succes !');
+            setAfficherChangeMdp(false);
+            setAncienMdp('');
+            setNouveauMdp('');
+            setConfirmMdp('');
+        } catch (error) {
+            alert(error.response?.data?.error || 'Erreur lors du changement de mot de passe');
+        }
+    };
 
     const handleCreerDemande = async () => {
         await creerDemande({
@@ -75,7 +100,23 @@ function Dashboard({ user }) {
                 <h2>Bonjour {user?.nom_complet}</h2>
                 <p>Note moyenne: {user?.note_moyenne || 'Pas encore note'} /5</p>
                 <button className="btn_deconnexion" onClick={() => { localStorage.clear(); window.location.href='https://cargo-link-cameroun.vercel.app'; }}>Se deconnecter</button>
+                <button onClick={() => setAfficherChangeMdp(!afficherChangeMdp)} style={{marginLeft:'10px', backgroundColor:'#1F4E79', color:'white', border:'none', padding:'8px 14px', borderRadius:'6px', cursor:'pointer', fontSize:'13px'}}>
+                    Changer mon mot de passe
+                </button>
             </div>
+
+            {afficherChangeMdp && (
+                <div style={{padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px', marginBottom:'20px'}}>
+                    <h3>Changer mon mot de passe</h3>
+                    <input type="password" placeholder="Ancien mot de passe" value={ancienMdp} onChange={e => setAncienMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <input type="password" placeholder="Nouveau mot de passe (6 caracteres min)" value={nouveauMdp} onChange={e => setNouveauMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <input type="password" placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChange={e => setConfirmMdp(e.target.value)} style={{display:'block', width:'100%', marginBottom:'10px', padding:'8px'}} />
+                    <button onClick={handleChangerMotDePasse} style={{backgroundColor:'#1A5E38', color:'white', padding:'10px 20px', border:'none', borderRadius:'6px', cursor:'pointer'}}>
+                        Confirmer
+                    </button>
+                </div>
+            )}
+
             <h3>Nouvelle demande de transport</h3>
             <input placeholder="Marchandise" value={marchandise} onChange={e => setMarchandise(e.target.value)} />
             <select value={villeDepart} onChange={e => setVilleDepart(e.target.value)}>

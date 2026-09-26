@@ -23,4 +23,6 @@ export const choisirProposition = (id, propositionId) => API.put('/demandes/' + 
 export const getMesDemandes = () => API.get('/demandes/mes-demandes');
 export const getMesDemandesTransporteur = () => API.get('/demandes/mes-demandes-transporteur');
 
+export const changerMotDePasse = (data) => API.put('/auth/changer-mot-de-passe', data);
+
 export default API;

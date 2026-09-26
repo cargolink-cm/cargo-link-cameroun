@@ -142,4 +142,51 @@ async function enregistrerTentativeEchouee(identifiant, tentativeResult) {
     }
 }
 
+router.put('/changer-mot-de-passe', async (req, res) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+        return res.status(401).json({ error: 'Token manquant' });
+    }
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        return res.status(401).json({ error: 'Token invalide' });
+    }
+
+    const { ancienMotDePasse, nouveauMotDePasse } = req.body;
+
+    if (!ancienMotDePasse || !nouveauMotDePasse) {
+        return res.status(400).json({ error: 'Ancien et nouveau mot de passe requis' });
+    }
+
+    if (nouveauMotDePasse.length < 6) {
+        return res.status(400).json({ error: 'Le nouveau mot de passe doit contenir au moins 6 caracteres' });
+    }
+
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Utilisateur introuvable' });
+        }
+
+        const user = result.rows[0];
+        const validPassword = await bcrypt.compare(ancienMotDePasse, user.password);
+
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Ancien mot de passe incorrect' });
+        }
+
+        const nouveauHash = await bcrypt.hash(nouveauMotDePasse, 10);
+        await pool.query('UPDATE users SET password = $1 WHERE id = $2', [nouveauHash, user.id]);
+
+        res.json({ message: 'Mot de passe modifie avec succes' });
+    } catch (error) {
+        console.log('Erreur changement mot de passe utilisateur:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

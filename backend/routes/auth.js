@@ -9,7 +9,10 @@ const DUREE_BLOCAGE_MINUTES = 15;
 
 router.post('/inscription', async (req, res) => {
     console.log('INSCRIPTION RECUE:', req.body);
-    const { email, password, nom_complet, telephone, type_utilisateur } = req.body;
+    let { email, password, nom_complet, telephone, type_utilisateur } = req.body;
+    email = email ? email.trim() : email;
+    telephone = telephone ? telephone.trim() : telephone;
+    nom_complet = nom_complet ? nom_complet.trim() : nom_complet;
     const identifiant = email || telephone;
     if (!identifiant) {
         return res.status(400).json({ error: 'Email ou telephone requis' });
@@ -56,7 +59,9 @@ router.post('/inscription', async (req, res) => {
 });
 
 router.post('/connexion', async (req, res) => {
-    const { email, telephone, password } = req.body;
+    let { email, telephone, password } = req.body;
+    email = email ? email.trim() : email;
+    telephone = telephone ? telephone.trim() : telephone;
     const identifiant = email || telephone;
     console.log('Tentative connexion:', email, password);
 

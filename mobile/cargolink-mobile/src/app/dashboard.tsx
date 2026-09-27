@@ -191,9 +191,9 @@ export default function Dashboard() {
 
       {afficherChangeMdp && (
         <View style={styles.blocChangeMdp}>
-          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry />
-          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry />
-          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry placeholderTextColor="#888" />
+          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry placeholderTextColor="#888" />
+          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry placeholderTextColor="#888" />
           <TouchableOpacity style={styles.btnConfirmerMdp} onPress={changerMotDePasse}>
             <Text style={styles.btnTexte}>Confirmer</Text>
           </TouchableOpacity>
@@ -201,7 +201,7 @@ export default function Dashboard() {
       )}
 
       <Text style={styles.sectionTitre}>Nouvelle demande</Text>
-      <TextInput style={styles.input} placeholder="Marchandise *" value={marchandise} onChangeText={setMarchandise} />
+      <TextInput style={styles.input} placeholder="Marchandise *" value={marchandise} onChangeText={setMarchandise} placeholderTextColor="#888" />
 
       <Text style={styles.label}>Ville de depart</Text>
       <TouchableOpacity style={styles.selector} onPress={() => setModalDepart(true)}>
@@ -221,8 +221,8 @@ export default function Dashboard() {
         <Text style={styles.arrow}>▼</Text>
       </TouchableOpacity>
 
-      <TextInput style={styles.input} placeholder="Poids en tonnes *" value={poids} onChangeText={setPoids} keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="Budget FCFA *" value={budget} onChangeText={setBudget} keyboardType="numeric" />
+      <TextInput style={styles.input} placeholder="Poids en tonnes *" value={poids} onChangeText={setPoids} keyboardType="numeric" placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="Budget FCFA *" value={budget} onChangeText={setBudget} keyboardType="numeric" placeholderTextColor="#888" />
 
       <TouchableOpacity style={styles.btn} onPress={publierDemande}>
         <Text style={styles.btnTexte}>Publier la demande</Text>

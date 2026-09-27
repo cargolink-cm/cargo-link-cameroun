@@ -45,11 +45,11 @@ export default function Inscription() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titre}>Inscription CargoLink</Text>
-      <TextInput style={styles.input} placeholder="Nom complet" value={nomComplet} onChangeText={setNomComplet} />
-      <TextInput style={styles.input} placeholder="Email (optionnel)" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder="Telephone" value={telephone} onChangeText={setTelephone} keyboardType="phone-pad" />
+      <TextInput style={styles.input} placeholder="Nom complet" value={nomComplet} onChangeText={setNomComplet} placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="Email (optionnel)" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor="#888" />
+      <TextInput style={styles.input} placeholder="Telephone" value={telephone} onChangeText={setTelephone} keyboardType="phone-pad" placeholderTextColor="#888" />
       <View style={styles.inputMdpContainer}>
-        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} />
+        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} placeholderTextColor="#888" />
         <TouchableOpacity onPress={() => setAfficherMdp(!afficherMdp)} style={styles.iconeOeil}>
           <Ionicons name={afficherMdp ? 'eye-off' : 'eye'} size={22} color="#888" />
         </TouchableOpacity>

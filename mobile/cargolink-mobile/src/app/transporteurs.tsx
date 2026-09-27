@@ -183,9 +183,9 @@ export default function Transporteurs() {
 
       {afficherChangeMdp && (
         <View style={styles.blocChangeMdp}>
-          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry />
-          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry />
-          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry />
+          <TextInput style={styles.input} placeholder="Ancien mot de passe" value={ancienMdp} onChangeText={setAncienMdp} secureTextEntry placeholderTextColor="#888" />
+          <TextInput style={styles.input} placeholder="Nouveau mot de passe (6 car. min)" value={nouveauMdp} onChangeText={setNouveauMdp} secureTextEntry placeholderTextColor="#888" />
+          <TextInput style={styles.input} placeholder="Confirmer le nouveau mot de passe" value={confirmMdp} onChangeText={setConfirmMdp} secureTextEntry placeholderTextColor="#888" />
           <TouchableOpacity style={styles.btnConfirmerMdp} onPress={changerMotDePasse}>
             <Text style={styles.btnTexte}>Confirmer</Text>
           </TouchableOpacity>

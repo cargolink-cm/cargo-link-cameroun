@@ -42,9 +42,9 @@ export default function Connexion() {
   return (
     <View style={styles.container}>
       <Text style={styles.titre}>Connexion CargoLink</Text>
-      <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} onChangeText={setIdentifiant} autoCapitalize="none" />
+      <TextInput style={styles.input} placeholder="Email ou telephone" value={identifiant} onChangeText={setIdentifiant} autoCapitalize="none" placeholderTextColor="#888" />
       <View style={styles.inputMdpContainer}>
-        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} />
+        <TextInput style={styles.inputMdp} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!afficherMdp} placeholderTextColor="#888" />
         <TouchableOpacity onPress={() => setAfficherMdp(!afficherMdp)} style={styles.iconeOeil}>
           <Ionicons name={afficherMdp ? 'eye-off' : 'eye'} size={22} color="#888" />
         </TouchableOpacity>

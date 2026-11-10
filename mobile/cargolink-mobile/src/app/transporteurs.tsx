@@ -5,6 +5,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import BoutonPartage from '../components/BoutonPartage';
 
 const API_URL = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
@@ -176,6 +177,7 @@ export default function Transporteurs() {
           <Text style={styles.deconnexion}>Deconnecter</Text>
         </TouchableOpacity>
       </View>
+      <BoutonPartage />
 
       <TouchableOpacity style={styles.btnChangerMdp} onPress={() => setAfficherChangeMdp(!afficherChangeMdp)}>
         <Text style={styles.btnChangerMdpTexte}>Changer mon mot de passe</Text>

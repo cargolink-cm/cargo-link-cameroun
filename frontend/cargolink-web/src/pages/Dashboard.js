@@ -3,6 +3,7 @@ import VILLES from '../data/villes';
 import Notations from './Notations';
 import { getDemandesDisponibles, creerDemande, getMesDemandes, getPropositions, choisirProposition, changerMotDePasse } from '../services/api';
 import TYPES_CAMIONS from '../data/camions';
+import BoutonPartage from '../components/BoutonPartage';
 
 function Dashboard({ user }) {
     const [demandes, setDemandes] = useState([]);
@@ -104,6 +105,7 @@ function Dashboard({ user }) {
                     Changer mon mot de passe
                 </button>
             </div>
+            <BoutonPartage />
 
             {afficherChangeMdp && (
                 <div style={{padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px', marginBottom:'20px'}}>

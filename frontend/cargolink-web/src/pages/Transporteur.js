@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getDemandesDisponibles, proposerOffre, getMesDemandesTransporteur, changerMotDePasse } from '../services/api';
+import BoutonPartage from '../components/BoutonPartage';
 
 function Transporteur({ user }) {
     const [demandes, setDemandes] = useState([]);
@@ -104,6 +105,7 @@ function Transporteur({ user }) {
                     Changer mon mot de passe
                 </button>
             </div>
+            <BoutonPartage />
 
             {afficherChangeMdp && (
                 <div style={{padding:'15px', backgroundColor:'#f5f5f5', borderRadius:'8px', marginBottom:'20px'}}>

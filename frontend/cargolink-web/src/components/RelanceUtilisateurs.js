@@ -39,18 +39,31 @@ export function normaliserTelephone(tel) {
 
 export function construireMessage(utilisateur) {
     const prenom = extrairePrenom(utilisateur.nom_complet);
-    const salut = prenom ? 'Bonjour ' + prenom + ' 👋' : 'Bonjour 👋';
-    const accroche = utilisateur.type_utilisateur === 'transporteur'
-        ? '🚚 Trouvez des chargements, proposez votre prix et remplissez vos camions.'
-        : '🚛 Publiez votre transport en quelques minutes et comparez les offres des transporteurs.';
+    const salut = prenom ? 'Bonjour *' + prenom + '* 👋' : 'Bonjour 👋';
+    const bande = '🟦🟧🟦🟧🟦🟧🟦🟧🟦🟧';
+    const avantages = utilisateur.type_utilisateur === 'transporteur'
+        ? [
+            '🚚 *Trouvez des chargements* partout au Cameroun',
+            '💰 *Proposez votre prix* directement',
+            '✅ *Remplissez vos camions*, inscription gratuite'
+        ]
+        : [
+            '🚛 *Publiez votre transport* en quelques minutes',
+            '💰 *Comparez les offres* des transporteurs',
+            '✅ *Choisissez la meilleure*, inscription gratuite'
+        ];
     return (
+        bande + '\n' +
+        '🚛 *C A R G O L I N K*\n' +
+        '🟧 *C A M E R O U N* 🟧\n' +
+        bande + '\n\n' +
         salut + '\n\n' +
-        'Vous vous êtes inscrit sur CargoLink Cameroun, mais vous n\'avez pas encore essayé l\'application.\n\n' +
-        accroche + '\n\n' +
-        '📲 Installez-la gratuitement :\n' +
+        'Vous vous êtes inscrit(e) sur *CargoLink Cameroun*, mais vous n\'avez pas encore essayé l\'application.\n\n' +
+        avantages.join('\n') + '\n\n' +
+        '📲 *Installez-la gratuitement :*\n' +
         LIEN + '\n\n' +
-        'Besoin d\'aide ? Répondez à ce message.\n' +
-        'CargoLink Cameroun, by EXDIVIA'
+        'Besoin d\'aide ? Répondez à ce message 🙏\n' +
+        '_CargoLink Cameroun, by EXDIVIA_'
     );
 }
 

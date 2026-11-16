@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import RelanceUtilisateurs from '../components/RelanceUtilisateurs';
 
 const API = 'https://cargo-link-cameroun-production.up.railway.app/api';
 
@@ -277,6 +278,8 @@ export default function Admin() {
           </table>
         </div>
       </div>
+
+      <RelanceUtilisateurs utilisateurs={utilisateurs} />
 
       <div className="admin-section">
         <h2>Autres actions administrateur</h2>
